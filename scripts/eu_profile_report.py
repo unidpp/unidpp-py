@@ -27,7 +27,10 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from unidpp.adapters.en18223 import run_eu_profile_suite, write_eu_profile_reports  # noqa: E402
+from unidpp.adapters.en18223 import (
+    run_eu_profile_suite,
+    write_eu_profile_reports,
+)
 
 DEFAULT_FIXTURES = REPO_ROOT / "conformance" / "eu-profile" / "fixtures" / "en-18223"
 DEFAULT_OUT = REPO_ROOT / "conformance" / "eu-profile"

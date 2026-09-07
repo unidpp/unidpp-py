@@ -24,6 +24,12 @@ Validation layers applied to every fixture:
    document as printed.
 4. Neutral-core mapping — header identifiers mapped to
    ``ProductIdentifier`` and validated with ``model.validate_identifier``.
+5. DPP temporal profile — every timestamp field validated against the
+   ISO 8601-1:2019 profile as impacted by Amd 1:2022
+   (``unidpp.temporal``), with precise-path findings. A carrier-budget
+   observation (``unidpp.carrier``: canonical size vs the ISO/IEC 18004
+   QR capacity tables) is recorded per fixture without affecting the
+   outcome.
 
 Outcome semantics: a fixture *passes* when it carries no error-severity
 finding, i.e. the payload is consistent with the EN's own normative text
@@ -42,6 +48,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
+from .. import carrier, temporal
 from .. import model as M
 from ..conformance import ISO639_1_ASSIGNED, validate_en18223_document
 from ..validate import validate
@@ -315,6 +322,7 @@ class FixtureResult:
     parsed: bool
     adaptations: list[str] = field(default_factory=list)
     findings: list[ProfileFinding] = field(default_factory=list)
+    carrier: dict[str, Any] | None = None  # carrier-budget observation
 
     @property
     def error_findings(self) -> int:
@@ -331,6 +339,7 @@ class FixtureResult:
             "parsed": self.parsed,
             "adaptations": list(self.adaptations),
             "errorFindings": self.error_findings,
+            "carrier": self.carrier,
             "findings": [f.to_dict() for f in self.findings],
         }
 
@@ -1152,6 +1161,7 @@ def validate_profile_fixture(
                 adaptations.append("PA8")
         else:
             tree = doc if isinstance(doc, dict) else None
+        result.carrier = carrier.measure(doc).to_dict()
     else:  # xml
         doc, exc = project_xml(corrected)
         if doc is None:
@@ -1171,6 +1181,7 @@ def validate_profile_fixture(
         data = doc.get("_dataElements", {})
         tree = promote_compressed(data, fragment=True)
         adaptations.extend(["PA4", "PA5", "PA7", "PA8"])
+        result.carrier = carrier.measure(doc).to_dict()
 
     adaptations.append("PA6")
 
@@ -1216,6 +1227,29 @@ def validate_profile_fixture(
     findings.extend(_semantic_rules(tree))
     findings.extend(_timestamp_rules({**header, **({"elements": tree["elements"]} if tree else {})}))
     findings.extend(_vacancy_references(header, tree))
+
+    # Layer 5: the DPP temporal profile (ISO 8601-1:2019 incl. Amd 1:2022
+    # disambiguation) over every timestamp field, header and element tree
+    # alike — findings carry a precise JSONPath (unidpp.temporal).
+    temporal_doc: dict[str, Any] = dict(header)
+    if tree and isinstance(tree, dict):
+        temporal_doc["elements"] = tree.get("elements", [])
+    for tf in temporal.validate_document(temporal_doc):
+        findings.append(
+            ProfileFinding(
+                code=tf.code,
+                severity="error",
+                message=tf.message,
+                audit_ref="A4",  # the AUDIT A4 timestamp-discipline family
+                citation=f'"{tf.field}": "{tf.value}"',
+                path=tf.path,
+            )
+        )
+
+    # Carrier-budget observation (unidpp.carrier): canonical serialized
+    # size vs the ISO/IEC 18004 QR capacity tables ported from the CLI.
+    # Observation only — carrier budgets bind Tier-A carrier-embedded
+    # packs, not served Tier-B documents; no finding is raised here.
 
     result.adaptations = adaptations
     result.findings = findings
@@ -1403,7 +1437,14 @@ def _markdown_report(report: dict[str, Any]) -> str:
         "Schemas (Tables 1–6) checked with the model's own "
         "`unidpp.validate` engine on the normalized document; (3) EU-profile "
         "semantic rules encoding the EN's own normative text; (4) neutral-core "
-        "identifier mapping validated with `unidpp.model.validate_identifier`."
+        "identifier mapping validated with `unidpp.model.validate_identifier`; "
+        "(5) the DPP temporal profile (`unidpp.temporal`) — every timestamp "
+        "field against ISO 8601-1:2019 as impacted by Amd 1:2022, with "
+        "precise JSONPath findings. A carrier-budget observation "
+        "(`unidpp.carrier`) records each fixture's canonical serialized size "
+        "against the ISO/IEC 18004 QR capacity tables (ported from the CLI): "
+        "observation only, since carrier budgets bind Tier-A carrier-embedded "
+        "packs, not served documents."
     )
     add(f"- Outcome semantics: {report['outcomeSemantics']}.")
     add(
@@ -1435,8 +1476,8 @@ def _markdown_report(report: dict[str, Any]) -> str:
     add("")
     add("## 3. Per-fixture results")
     add("")
-    add("| Fixture | Clause | Kind | Parsed | Outcome | Findings |")
-    add("|---|---|---|---|---|---|")
+    add("| Fixture | Clause | Kind | Parsed | Outcome | Carrier | Findings |")
+    add("|---|---|---|---|---|---|---|")
     for r in report["results"]:
         codes = ", ".join(
             f"{f['code']} ({f['auditRef']})" if f["auditRef"] else f["code"]
@@ -1445,6 +1486,7 @@ def _markdown_report(report: dict[str, Any]) -> str:
         add(
             f"| {r['fixture']} | {r['clause']} | {r['kind']} | "
             f"{'yes' if r['parsed'] else 'no'} | {r['outcome']} | "
+            f"{carrier.render(r.get('carrier'))} | "
             f"{_md_escape(codes) or '—'} |"
         )
     add("")

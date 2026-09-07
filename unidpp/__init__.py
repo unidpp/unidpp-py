@@ -10,6 +10,12 @@ Modules:
                           slots with the ECDSA-None degrade placeholder)
 - ``unidpp.conformance``— conformance runner (positive corpus + AUDIT.md
                           A1-A6 negative fixtures; JSON + markdown reports)
+- ``unidpp.temporal``  — the DPP temporal profile: ISO 8601-1:2019
+                          (incl. Amd 1:2022 disambiguation) validation of
+                          every timestamp field, with precise paths
+- ``unidpp.carrier``   — carrier budgets: ISO/IEC 18004 QR capacity
+                          tables (ported from the CLI) and the budget
+                          grammar
 - ``unidpp.adapters``   — EPCIS event import, UNTP stub parsing
 - ``unidpp.fixtures``   — laptop and car pilots ported from the TS repo
 """

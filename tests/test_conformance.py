@@ -82,15 +82,20 @@ class TestNegativeCorpus:
 
 
 class TestRunner:
-    def test_registry_has_the_two_checks(self):
-        assert set(CHECK_REGISTRY) == {"positive-corpus", "audit-negative"}
+    def test_registry_has_the_four_checks(self):
+        assert set(CHECK_REGISTRY) == {
+            "positive-corpus",
+            "audit-negative",
+            "temporal-conformance",
+            "carrier-budget",
+        }
 
     def test_run_conformance_all_pass(self):
         report = run_conformance()
         assert report["failed"] == 0
         assert report["passed"] == report["total"]
-        # 3 positive + 7 negative (A1-A6 + key-drift)
-        assert report["total"] == 10
+        # 3 positive + 7 negative (A1-A6 + key-drift) + 2 carrier fixtures
+        assert report["total"] == 12
 
     def test_negative_results_carry_expected_code(self):
         report = run_conformance()

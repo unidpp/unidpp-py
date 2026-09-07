@@ -1,6 +1,6 @@
 # UniDPP competitor conformance report — freeDPP & open-dpp published artifacts
 
-Generated: 2026-09-07T08:32:36Z
+Generated: 2026-09-07T17:34:45Z
 
 **Companion to the EU-profile report.** This report records a machine-run of every artifact published by freeDPP (github.com/OttoHandle/freeDPP) and open-dpp (github.com/open-dpp/open-dpp) through the same EN 18223 conformance pipeline (`unidpp.adapters.en18223.validate_profile_fixture`) that produced the `conformance/eu-profile/REPORT.md` register.
 
@@ -17,6 +17,8 @@ Generated: 2026-09-07T08:32:36Z
 - Pipeline: same runner as the EU-profile report (`scripts/eu_profile_report.py`); the runner is invoked with no parameter changes — its semantics encode what EN 18223 normatively says (lowercase granularity enumeration, lowercase status enumeration, ISO 8601-1 timestamps with ASCII separators, ISO 639-1/BCP 47 language tags, the prose class-name spelling, valueDataType/value JSON-type consistency, etc.).
 - Format detection: the runner inspects each artifact's top-level shape. Artifacts that carry the EN 18223 header keys (`digitalProductPassportId`, `uniqueProductIdentifier`, `granularity`, `dppSchemaVersion`, `dppStatus`, `lastUpdated`, `economicOperatorId`, `facilityId`, `contentSpecificationIds`) or an `elements[]` tree are run through all four validation layers (AUDIT A-rules on the header, EU-profile JSON Schemas, EU-profile semantic rules, neutral-core identifier mapping).
 - Artifacts that are NOT EN 18223-shaped receive a single info-severity `format-not-en-18223` coverage observation; the validator layers are not invoked. No findings are manufactured. The observation records the artifact's declared format/version and its top-level keys; the rationale is documented as the runner semantics.
+- Temporal layer: EN 18223-shaped artifacts additionally run the DPP temporal profile (`unidpp.temporal`) — every timestamp field against ISO 8601-1:2019 as impacted by Amd 1:2022, with precise-path findings (e.g. a server-local timestamp with no timezone designator).
+- Carrier column: canonical serialized size against the ISO/IEC 18004 QR byte-capacity tables (`unidpp.carrier`, ported from the CLI's tables). An observation only — carrier budgets bind Tier-A carrier-embedded packs, not served documents; no finding is raised from it.
 - Outcome semantics: pass = zero error-severity findings (artifact is consistent with the EN 18223 normative text); fail = one or more error-severity findings; not-applicable = artifact is not EN 18223-shaped and is recorded as a coverage observation only.
 
 ## 2. Results summary
@@ -26,11 +28,11 @@ Generated: 2026-09-07T08:32:36Z
 - Pass: **0**
 - Fail (error-severity findings): **6**
 - Not applicable (different wire format): **1**
-- Error-severity findings (across vendors): **245**
+- Error-severity findings (across vendors): **251**
 
 | Vendor | Artifacts | Pass | Fail | N/A | Error findings |
 |---|---|---|---|---|---|
-| freedpp | 6 | 0 | 6 | 0 | 245 |
+| freedpp | 6 | 0 | 6 | 0 | 251 |
 | open-dpp | 1 | 0 | 0 | 1 | 0 |
 
 ## 3. freeDPP
@@ -62,7 +64,7 @@ curl -sH 'Accept: application/json' 'https://insulation.freedpp.eu/v1/dppsByProd
 - Artifacts: **6**
 - Pass: **0**
 - Fail: **6**
-- Error findings: **245**
+- Error findings: **251**
 
 Findings by AUDIT id (matches the EU-profile register):
 
@@ -70,6 +72,7 @@ Findings by AUDIT id (matches the EU-profile register):
 |---|---|
 | A1 | 6 |
 | A3 | 170 |
+| A4 | 6 |
 | A6 | 6 |
 | C4 | 6 |
 | N3 | 10 |
@@ -82,14 +85,14 @@ Serialization asymmetry (factual): the `?representation=compressed` artifacts ca
 
 ### 3.2 freeDPP per-artifact results
 
-| Artifact | Outcome | Error findings | Distinct codes |
-|---|---|---|---|
-| drill-api-compressed | fail | 4 | 4 (A1-granularity-casing, A6-schema-version-placeholder, C4-content-spec-placeholder, profile-header-schema) |
-| drill-api-full | fail | 87 | 8 (A1-granularity-casing, A3-class-name-drift, A6-schema-version-placeholder, C4-content-spec-placeholder, N3-duplicate-element-id, N4-value-data-type-mismatch, N5-multivalued-child-key-divergence, profile-header-schema) |
-| drill-test1 | fail | 87 | 8 (A1-granularity-casing, A3-class-name-drift, A6-schema-version-placeholder, C4-content-spec-placeholder, N3-duplicate-element-id, N4-value-data-type-mismatch, N5-multivalued-child-key-divergence, profile-header-schema) |
-| insulation-api-compressed | fail | 3 | 4 (A1-granularity-casing, A6-schema-version-placeholder, C4-content-spec-placeholder, profile-header-schema) |
-| insulation-api-full | fail | 32 | 6 (A1-granularity-casing, A3-class-name-drift, A6-schema-version-placeholder, C4-content-spec-placeholder, N4-value-data-type-mismatch, profile-header-schema) |
-| insulation-test2 | fail | 32 | 6 (A1-granularity-casing, A3-class-name-drift, A6-schema-version-placeholder, C4-content-spec-placeholder, N4-value-data-type-mismatch, profile-header-schema) |
+| Artifact | Outcome | Error findings | Distinct codes | Carrier |
+|---|---|---|---|---|
+| drill-api-compressed | fail | 5 | 5 (A1-granularity-casing, A6-schema-version-placeholder, C4-content-spec-placeholder, T7-timezone-missing, profile-header-schema) | 2917 B · exceeds QR v40-M |
+| drill-api-full | fail | 88 | 9 (A1-granularity-casing, A3-class-name-drift, A6-schema-version-placeholder, C4-content-spec-placeholder, N3-duplicate-element-id, N4-value-data-type-mismatch, N5-multivalued-child-key-divergence, T7-timezone-missing, profile-header-schema) | 15728 B · exceeds QR v40-M |
+| drill-test1 | fail | 88 | 9 (A1-granularity-casing, A3-class-name-drift, A6-schema-version-placeholder, C4-content-spec-placeholder, N3-duplicate-element-id, N4-value-data-type-mismatch, N5-multivalued-child-key-divergence, T7-timezone-missing, profile-header-schema) | 15728 B · exceeds QR v40-M |
+| insulation-api-compressed | fail | 4 | 5 (A1-granularity-casing, A6-schema-version-placeholder, C4-content-spec-placeholder, T7-timezone-missing, profile-header-schema) | 1410 B · QR v31-M |
+| insulation-api-full | fail | 33 | 7 (A1-granularity-casing, A3-class-name-drift, A6-schema-version-placeholder, C4-content-spec-placeholder, N4-value-data-type-mismatch, T7-timezone-missing, profile-header-schema) | 6924 B · exceeds QR v40-M |
+| insulation-test2 | fail | 33 | 7 (A1-granularity-casing, A3-class-name-drift, A6-schema-version-placeholder, C4-content-spec-placeholder, N4-value-data-type-mismatch, T7-timezone-missing, profile-header-schema) | 6924 B · exceeds QR v40-M |
 
 ### 3.3 freeDPP findings detail
 
@@ -107,9 +110,15 @@ Source: `GET https://drill.freedpp.eu/v1/dppsByProductId/5012345101095?represent
 
 - `C4-content-spec-placeholder` (info, path `$.contentSpecificationIds`) **[AUDIT C4]**: contentSpecificationIds values are placeholders (['EN 01234-5:2027']); identifier space, allocator and validation undefined (AUDIT C4).
 
- Citation:
+  Citation:
 
- > ["EN 01234-5:2027"]
+  > ["EN 01234-5:2027"]
+
+- `T7-timezone-missing` (error, path `$.lastUpdated`) **[AUDIT A4]**: '2026-06-17T23:20:58.0000000' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))
+
+  Citation:
+
+  > "lastUpdated": "2026-06-17T23:20:58.0000000"
 
 
 #### drill-api-full — **fail**
@@ -126,194 +135,202 @@ Source: `GET https://drill.freedpp.eu/v1/dppsByProductId/5012345101095?represent
 
 - `N3-duplicate-element-id` (error, path `$.elements[0].elements[21].elementId`) **[AUDIT N3]**: elementId '_p_d_SafetyInstructions' is used by two siblings (elements[20] and elements[21]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_SafetyInstructions"
+  > "elementId": "_p_d_SafetyInstructions"
 
 - `A3-class-name-drift` (error, path `$.elements[0].elements[0].objectType`) **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 
-… and **82** further findings, collapsed by identical message into 22 code(s):
+… and **83** further findings, collapsed by identical message into 23 code(s):
 
 - `A3-class-name-drift` (error) × **59 occurrences** **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Paths (first 5): `$.elements[0].elements[1].objectType`, `$.elements[0].elements[2].objectType`, `$.elements[0].elements[3].objectType`, `$.elements[0].elements[4].objectType`, `$.elements[0].elements[5].objectType` (+54 more)
+  Paths (first 5): `$.elements[0].elements[1].objectType`, `$.elements[0].elements[2].objectType`, `$.elements[0].elements[3].objectType`, `$.elements[0].elements[4].objectType`, `$.elements[0].elements[5].objectType` (+54 more)
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '20'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[2].value`
+  Paths (first 5): `$.elements[0].elements[2].value`
 
- Citation:
+  Citation:
 
- > "value": "20"
+  > "value": "20"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:integer' with value serialized as a JSON string '1000'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[5].value`
+  Paths (first 5): `$.elements[0].elements[5].value`
 
- Citation:
+  Citation:
 
- > "value": "1000"
+  > "value": "1000"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:integer' with value serialized as a JSON string '6'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[8].value`
+  Paths (first 5): `$.elements[0].elements[8].value`
 
- Citation:
+  Citation:
 
- > "value": "6"
+  > "value": "6"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '1.8'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[13].value`
+  Paths (first 5): `$.elements[0].elements[13].value`
 
- Citation:
+  Citation:
 
- > "value": "1.8"
+  > "value": "1.8"
 
 - `N5-multivalued-child-key-divergence` (error) × **1 occurrences** **[AUDIT N5]**: MultiValuedDataElement children serialized under 'value'; Annex A Example 1 serializes the same class's children under 'elements'; Table 4 (4.1.2.6) models them as '[DataElement]' entries (finding N5).
 
- Paths (first 5): `$.elements[0].elements[14].value`
+  Paths (first 5): `$.elements[0].elements[14].value`
 
- Citation:
+  Citation:
 
- > "value": [ { "elementId": "efficiencyRating1", … } ]
+  > "value": [ { "elementId": "efficiencyRating1", … } ]
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '2'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[15].value`
+  Paths (first 5): `$.elements[0].elements[15].value`
 
- Citation:
+  Citation:
 
- > "value": "2"
+  > "value": "2"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '10'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[19].value`
+  Paths (first 5): `$.elements[0].elements[19].value`
 
- Citation:
+  Citation:
 
- > "value": "10"
+  > "value": "10"
 
 - `N3-duplicate-element-id` (error) × **1 occurrences** **[AUDIT N3]**: elementId '_p_d_AddressLine2PostalCodeCity' is used by two siblings (elements[0] and elements[1]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Paths (first 5): `$.elements[1].elements[1].elementId`
+  Paths (first 5): `$.elements[1].elements[1].elementId`
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_AddressLine2PostalCodeCity"
+  > "elementId": "_p_d_AddressLine2PostalCodeCity"
 
 - `N3-duplicate-element-id` (error) × **1 occurrences** **[AUDIT N3]**: elementId '_p_d_RecyclingInstructions' is used by two siblings (elements[0] and elements[1]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Paths (first 5): `$.elements[4].elements[1].elementId`
+  Paths (first 5): `$.elements[4].elements[1].elementId`
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_RecyclingInstructions"
+  > "elementId": "_p_d_RecyclingInstructions"
 
 - `N3-duplicate-element-id` (error) × **1 occurrences** **[AUDIT N3]**: elementId '_p_d_MaterialComposition' is used by two siblings (elements[2] and elements[3]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Paths (first 5): `$.elements[4].elements[3].elementId`
+  Paths (first 5): `$.elements[4].elements[3].elementId`
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_MaterialComposition"
+  > "elementId": "_p_d_MaterialComposition"
 
 - `N3-duplicate-element-id` (error) × **1 occurrences** **[AUDIT N3]**: elementId '_p_d_HazardousSubstancesConcentrationLocation' is used by two siblings (elements[4] and elements[5]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Paths (first 5): `$.elements[4].elements[5].elementId`
+  Paths (first 5): `$.elements[4].elements[5].elementId`
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_HazardousSubstancesConcentrationLocation"
+  > "elementId": "_p_d_HazardousSubstancesConcentrationLocation"
 
 - `N4-value-data-type-mismatch` (error) × **3 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '100'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[0].value`, `$.elements[5].elements[2].value`, `$.elements[5].elements[6].value`
+  Paths (first 5): `$.elements[5].elements[0].value`, `$.elements[5].elements[2].value`, `$.elements[5].elements[6].value`
 
- Citation:
+  Citation:
 
- > "value": "100"
+  > "value": "100"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '12'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[4].value`
+  Paths (first 5): `$.elements[5].elements[4].value`
 
- Citation:
+  Citation:
 
- > "value": "12"
+  > "value": "12"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '60'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[5].value`
+  Paths (first 5): `$.elements[5].elements[5].value`
 
- Citation:
+  Citation:
 
- > "value": "60"
+  > "value": "60"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '230'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[7].value`
+  Paths (first 5): `$.elements[5].elements[7].value`
 
- Citation:
+  Citation:
 
- > "value": "230"
+  > "value": "230"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '30'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[8].value`
+  Paths (first 5): `$.elements[5].elements[8].value`
 
- Citation:
+  Citation:
 
- > "value": "30"
+  > "value": "30"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '66'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[6].elements[0].value`
+  Paths (first 5): `$.elements[6].elements[0].value`
 
- Citation:
+  Citation:
 
- > "value": "66"
+  > "value": "66"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '34'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[6].elements[1].value`
+  Paths (first 5): `$.elements[6].elements[1].value`
 
- Citation:
+  Citation:
 
- > "value": "34"
+  > "value": "34"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '1'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[6].elements[2].value`
+  Paths (first 5): `$.elements[6].elements[2].value`
 
- Citation:
+  Citation:
 
- > "value": "1"
+  > "value": "1"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '12016'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[6].elements[3].value`
+  Paths (first 5): `$.elements[6].elements[3].value`
 
- Citation:
+  Citation:
 
- > "value": "12016"
+  > "value": "12016"
 
 - `C4-content-spec-placeholder` (info) × **1 occurrences** **[AUDIT C4]**: contentSpecificationIds values are placeholders (['EN 01234-5:2027']); identifier space, allocator and validation undefined (AUDIT C4).
 
- Paths (first 5): `$.contentSpecificationIds`
+  Paths (first 5): `$.contentSpecificationIds`
 
- Citation:
+  Citation:
 
- > ["EN 01234-5:2027"]
+  > ["EN 01234-5:2027"]
+
+- `T7-timezone-missing` (error) × **1 occurrences** **[AUDIT A4]**: '2026-06-17T23:20:58' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))
+
+  Paths (first 5): `$.lastUpdated`
+
+  Citation:
+
+  > "lastUpdated": "2026-06-17T23:20:58"
 
 
 #### drill-test1 — **fail**
@@ -330,194 +347,202 @@ Source: `GET https://drill.freedpp.eu/01/5012345101095 (Accept: application/json
 
 - `N3-duplicate-element-id` (error, path `$.elements[0].elements[21].elementId`) **[AUDIT N3]**: elementId '_p_d_SafetyInstructions' is used by two siblings (elements[20] and elements[21]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_SafetyInstructions"
+  > "elementId": "_p_d_SafetyInstructions"
 
 - `A3-class-name-drift` (error, path `$.elements[0].elements[0].objectType`) **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 
-… and **82** further findings, collapsed by identical message into 22 code(s):
+… and **83** further findings, collapsed by identical message into 23 code(s):
 
 - `A3-class-name-drift` (error) × **59 occurrences** **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Paths (first 5): `$.elements[0].elements[1].objectType`, `$.elements[0].elements[2].objectType`, `$.elements[0].elements[3].objectType`, `$.elements[0].elements[4].objectType`, `$.elements[0].elements[5].objectType` (+54 more)
+  Paths (first 5): `$.elements[0].elements[1].objectType`, `$.elements[0].elements[2].objectType`, `$.elements[0].elements[3].objectType`, `$.elements[0].elements[4].objectType`, `$.elements[0].elements[5].objectType` (+54 more)
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '20'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[2].value`
+  Paths (first 5): `$.elements[0].elements[2].value`
 
- Citation:
+  Citation:
 
- > "value": "20"
+  > "value": "20"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:integer' with value serialized as a JSON string '1000'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[5].value`
+  Paths (first 5): `$.elements[0].elements[5].value`
 
- Citation:
+  Citation:
 
- > "value": "1000"
+  > "value": "1000"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:integer' with value serialized as a JSON string '6'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[8].value`
+  Paths (first 5): `$.elements[0].elements[8].value`
 
- Citation:
+  Citation:
 
- > "value": "6"
+  > "value": "6"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '1.8'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[13].value`
+  Paths (first 5): `$.elements[0].elements[13].value`
 
- Citation:
+  Citation:
 
- > "value": "1.8"
+  > "value": "1.8"
 
 - `N5-multivalued-child-key-divergence` (error) × **1 occurrences** **[AUDIT N5]**: MultiValuedDataElement children serialized under 'value'; Annex A Example 1 serializes the same class's children under 'elements'; Table 4 (4.1.2.6) models them as '[DataElement]' entries (finding N5).
 
- Paths (first 5): `$.elements[0].elements[14].value`
+  Paths (first 5): `$.elements[0].elements[14].value`
 
- Citation:
+  Citation:
 
- > "value": [ { "elementId": "efficiencyRating1", … } ]
+  > "value": [ { "elementId": "efficiencyRating1", … } ]
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '2'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[15].value`
+  Paths (first 5): `$.elements[0].elements[15].value`
 
- Citation:
+  Citation:
 
- > "value": "2"
+  > "value": "2"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '10'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[0].elements[19].value`
+  Paths (first 5): `$.elements[0].elements[19].value`
 
- Citation:
+  Citation:
 
- > "value": "10"
+  > "value": "10"
 
 - `N3-duplicate-element-id` (error) × **1 occurrences** **[AUDIT N3]**: elementId '_p_d_AddressLine2PostalCodeCity' is used by two siblings (elements[0] and elements[1]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Paths (first 5): `$.elements[1].elements[1].elementId`
+  Paths (first 5): `$.elements[1].elements[1].elementId`
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_AddressLine2PostalCodeCity"
+  > "elementId": "_p_d_AddressLine2PostalCodeCity"
 
 - `N3-duplicate-element-id` (error) × **1 occurrences** **[AUDIT N3]**: elementId '_p_d_RecyclingInstructions' is used by two siblings (elements[0] and elements[1]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Paths (first 5): `$.elements[4].elements[1].elementId`
+  Paths (first 5): `$.elements[4].elements[1].elementId`
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_RecyclingInstructions"
+  > "elementId": "_p_d_RecyclingInstructions"
 
 - `N3-duplicate-element-id` (error) × **1 occurrences** **[AUDIT N3]**: elementId '_p_d_MaterialComposition' is used by two siblings (elements[2] and elements[3]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Paths (first 5): `$.elements[4].elements[3].elementId`
+  Paths (first 5): `$.elements[4].elements[3].elementId`
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_MaterialComposition"
+  > "elementId": "_p_d_MaterialComposition"
 
 - `N3-duplicate-element-id` (error) × **1 occurrences** **[AUDIT N3]**: elementId '_p_d_HazardousSubstancesConcentrationLocation' is used by two siblings (elements[4] and elements[5]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).
 
- Paths (first 5): `$.elements[4].elements[5].elementId`
+  Paths (first 5): `$.elements[4].elements[5].elementId`
 
- Citation:
+  Citation:
 
- > "elementId": "_p_d_HazardousSubstancesConcentrationLocation"
+  > "elementId": "_p_d_HazardousSubstancesConcentrationLocation"
 
 - `N4-value-data-type-mismatch` (error) × **3 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '100'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[0].value`, `$.elements[5].elements[2].value`, `$.elements[5].elements[6].value`
+  Paths (first 5): `$.elements[5].elements[0].value`, `$.elements[5].elements[2].value`, `$.elements[5].elements[6].value`
 
- Citation:
+  Citation:
 
- > "value": "100"
+  > "value": "100"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '12'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[4].value`
+  Paths (first 5): `$.elements[5].elements[4].value`
 
- Citation:
+  Citation:
 
- > "value": "12"
+  > "value": "12"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '60'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[5].value`
+  Paths (first 5): `$.elements[5].elements[5].value`
 
- Citation:
+  Citation:
 
- > "value": "60"
+  > "value": "60"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '230'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[7].value`
+  Paths (first 5): `$.elements[5].elements[7].value`
 
- Citation:
+  Citation:
 
- > "value": "230"
+  > "value": "230"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '30'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[5].elements[8].value`
+  Paths (first 5): `$.elements[5].elements[8].value`
 
- Citation:
+  Citation:
 
- > "value": "30"
+  > "value": "30"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '66'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[6].elements[0].value`
+  Paths (first 5): `$.elements[6].elements[0].value`
 
- Citation:
+  Citation:
 
- > "value": "66"
+  > "value": "66"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '34'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[6].elements[1].value`
+  Paths (first 5): `$.elements[6].elements[1].value`
 
- Citation:
+  Citation:
 
- > "value": "34"
+  > "value": "34"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '1'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[6].elements[2].value`
+  Paths (first 5): `$.elements[6].elements[2].value`
 
- Citation:
+  Citation:
 
- > "value": "1"
+  > "value": "1"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:decimal' with value serialized as a JSON string '12016'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[6].elements[3].value`
+  Paths (first 5): `$.elements[6].elements[3].value`
 
- Citation:
+  Citation:
 
- > "value": "12016"
+  > "value": "12016"
 
 - `C4-content-spec-placeholder` (info) × **1 occurrences** **[AUDIT C4]**: contentSpecificationIds values are placeholders (['EN 01234-5:2027']); identifier space, allocator and validation undefined (AUDIT C4).
 
- Paths (first 5): `$.contentSpecificationIds`
+  Paths (first 5): `$.contentSpecificationIds`
 
- Citation:
+  Citation:
 
- > ["EN 01234-5:2027"]
+  > ["EN 01234-5:2027"]
+
+- `T7-timezone-missing` (error) × **1 occurrences** **[AUDIT A4]**: '2026-06-17T23:20:58' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))
+
+  Paths (first 5): `$.lastUpdated`
+
+  Citation:
+
+  > "lastUpdated": "2026-06-17T23:20:58"
 
 
 #### insulation-api-compressed — **fail**
@@ -532,9 +557,15 @@ Source: `GET https://insulation.freedpp.eu/v1/dppsByProductId/4003973287696?repr
 
 - `C4-content-spec-placeholder` (info, path `$.contentSpecificationIds`) **[AUDIT C4]**: contentSpecificationIds values are placeholders (['EN 13162:2012+A1:2015']); identifier space, allocator and validation undefined (AUDIT C4).
 
- Citation:
+  Citation:
 
- > ["EN 13162:2012+A1:2015"]
+  > ["EN 13162:2012+A1:2015"]
+
+- `T7-timezone-missing` (error, path `$.lastUpdated`) **[AUDIT A4]**: '2026-04-01T16:07:24.0000000' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))
+
+  Citation:
+
+  > "lastUpdated": "2026-04-01T16:07:24.0000000"
 
 
 #### insulation-api-full — **fail**
@@ -549,72 +580,80 @@ Source: `GET https://insulation.freedpp.eu/v1/dppsByProductId/4003973287696?repr
 
 - `A3-class-name-drift` (error, path `$.elements[0].elements[0].objectType`) **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 - `A3-class-name-drift` (error, path `$.elements[0].elements[1].objectType`) **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 - `A3-class-name-drift` (error, path `$.elements[0].elements[2].objectType`) **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 
-… and **27** further findings, collapsed by identical message into 6 code(s):
+… and **28** further findings, collapsed by identical message into 7 code(s):
 
 - `A3-class-name-drift` (error) × **22 occurrences** **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Paths (first 5): `$.elements[0].elements[3].objectType`, `$.elements[0].elements[4].objectType`, `$.elements[1].elements[0].objectType`, `$.elements[1].elements[1].objectType`, `$.elements[1].elements[2].objectType` (+17 more)
+  Paths (first 5): `$.elements[0].elements[3].objectType`, `$.elements[0].elements[4].objectType`, `$.elements[1].elements[0].objectType`, `$.elements[1].elements[1].objectType`, `$.elements[1].elements[2].objectType` (+17 more)
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:float' with value serialized as a JSON string '0,0011'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[4].elements[0].elements[0].value`
+  Paths (first 5): `$.elements[4].elements[0].elements[0].value`
 
- Citation:
+  Citation:
 
- > "value": "0,0011"
+  > "value": "0,0011"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:float' with value serialized as a JSON string '0.000012'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[4].elements[0].elements[1].value`
+  Paths (first 5): `$.elements[4].elements[0].elements[1].value`
 
- Citation:
+  Citation:
 
- > "value": "0.000012"
+  > "value": "0.000012"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:float' with value serialized as a JSON string '1.01'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[4].elements[0].elements[2].value`
+  Paths (first 5): `$.elements[4].elements[0].elements[2].value`
 
- Citation:
+  Citation:
 
- > "value": "1.01"
+  > "value": "1.01"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:float' with value serialized as a JSON string '0,0022'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[4].elements[0].elements[3].value`
+  Paths (first 5): `$.elements[4].elements[0].elements[3].value`
 
- Citation:
+  Citation:
 
- > "value": "0,0022"
+  > "value": "0,0022"
 
 - `C4-content-spec-placeholder` (info) × **1 occurrences** **[AUDIT C4]**: contentSpecificationIds values are placeholders (['EN 13162:2012+A1:2015']); identifier space, allocator and validation undefined (AUDIT C4).
 
- Paths (first 5): `$.contentSpecificationIds`
+  Paths (first 5): `$.contentSpecificationIds`
 
- Citation:
+  Citation:
 
- > ["EN 13162:2012+A1:2015"]
+  > ["EN 13162:2012+A1:2015"]
+
+- `T7-timezone-missing` (error) × **1 occurrences** **[AUDIT A4]**: '2026-04-01T16:07:24' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))
+
+  Paths (first 5): `$.lastUpdated`
+
+  Citation:
+
+  > "lastUpdated": "2026-04-01T16:07:24"
 
 
 #### insulation-test2 — **fail**
@@ -629,72 +668,80 @@ Source: `GET https://insulation.freedpp.eu/01/4003973287696 (Accept: application
 
 - `A3-class-name-drift` (error, path `$.elements[0].elements[0].objectType`) **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 - `A3-class-name-drift` (error, path `$.elements[0].elements[1].objectType`) **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 - `A3-class-name-drift` (error, path `$.elements[0].elements[2].objectType`) **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 
-… and **27** further findings, collapsed by identical message into 6 code(s):
+… and **28** further findings, collapsed by identical message into 7 code(s):
 
 - `A3-class-name-drift` (error) × **22 occurrences** **[AUDIT A3]**: objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.
 
- Paths (first 5): `$.elements[0].elements[3].objectType`, `$.elements[0].elements[4].objectType`, `$.elements[1].elements[0].objectType`, `$.elements[1].elements[1].objectType`, `$.elements[1].elements[2].objectType` (+17 more)
+  Paths (first 5): `$.elements[0].elements[3].objectType`, `$.elements[0].elements[4].objectType`, `$.elements[1].elements[0].objectType`, `$.elements[1].elements[1].objectType`, `$.elements[1].elements[2].objectType` (+17 more)
 
- Citation:
+  Citation:
 
- > "objectType": "SingleValuedDataElement"
+  > "objectType": "SingleValuedDataElement"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:float' with value serialized as a JSON string '0,0011'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[4].elements[0].elements[0].value`
+  Paths (first 5): `$.elements[4].elements[0].elements[0].value`
 
- Citation:
+  Citation:
 
- > "value": "0,0011"
+  > "value": "0,0011"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:float' with value serialized as a JSON string '0.000012'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[4].elements[0].elements[1].value`
+  Paths (first 5): `$.elements[4].elements[0].elements[1].value`
 
- Citation:
+  Citation:
 
- > "value": "0.000012"
+  > "value": "0.000012"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:float' with value serialized as a JSON string '1.01'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[4].elements[0].elements[2].value`
+  Paths (first 5): `$.elements[4].elements[0].elements[2].value`
 
- Citation:
+  Citation:
 
- > "value": "1.01"
+  > "value": "1.01"
 
 - `N4-value-data-type-mismatch` (error) × **1 occurrences** **[AUDIT N4]**: valueDataType 'xsd:float' with value serialized as a JSON string '0,0022'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).
 
- Paths (first 5): `$.elements[4].elements[0].elements[3].value`
+  Paths (first 5): `$.elements[4].elements[0].elements[3].value`
 
- Citation:
+  Citation:
 
- > "value": "0,0022"
+  > "value": "0,0022"
 
 - `C4-content-spec-placeholder` (info) × **1 occurrences** **[AUDIT C4]**: contentSpecificationIds values are placeholders (['EN 13162:2012+A1:2015']); identifier space, allocator and validation undefined (AUDIT C4).
 
- Paths (first 5): `$.contentSpecificationIds`
+  Paths (first 5): `$.contentSpecificationIds`
 
- Citation:
+  Citation:
 
- > ["EN 13162:2012+A1:2015"]
+  > ["EN 13162:2012+A1:2015"]
+
+- `T7-timezone-missing` (error) × **1 occurrences** **[AUDIT A4]**: '2026-04-01T16:07:24' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))
+
+  Paths (first 5): `$.lastUpdated`
+
+  Citation:
+
+  > "lastUpdated": "2026-04-01T16:07:24"
 
 
 ### 3.4 freeDPP source-model corroboration (verbatim citations)
@@ -703,51 +750,51 @@ The wire findings above are traceable to the published server model (`github.com
 
 - **S1** (freeDPPserver/FreeDppDppFull.cs:21): default granularity is the capitalized spelling — the origin of the A1-granularity-casing findings on every wire artifact
 
- Verbatim:
+  Verbatim:
 
- > ` public string granularity { get; set; } = "Model"; //batch, item`
+  > `            public string granularity { get; set; } = "Model"; //batch, item`
 
 - **S2** (freeDPPserver/FreeDppDppFull.cs:22): default dppSchemaVersion does not carry the ENnnn:vX.Y form — the origin of the A6-schema-version-placeholder findings
 
- Verbatim:
+  Verbatim:
 
- > ` public string dppSchemaVersion { get; set; } = "0.1";`
+  > `            public string dppSchemaVersion { get; set; } = "0.1";`
 
 - **S3** (freeDPPserver/FreeDppDppFull.cs:23): default dppStatus is the capitalized spelling; the live payloads override it with the lowercase 'active' the EN's examples use
 
- Verbatim:
+  Verbatim:
 
- > ` public string dppStatus { get; set; } = "Active";`
+  > `            public string dppStatus { get; set; } = "Active";`
 
 - **S4** (freeDPPserver/FreeDppDppFull.cs:24): lastUpdated defaults to server-local time (no timezone designator) — the origin of the not-a-valid-date-time findings
 
- Verbatim:
+  Verbatim:
 
- > ` public DateTime lastUpdated { get; set; } = DateTime.Now;`
+  > `            public DateTime lastUpdated { get; set; } = DateTime.Now;`
 
 - **S5** (freeDPPserver/FreeDppDppFull.cs:28): the hash slot is explicitly deferred: integrity is 'to be handled when EN 18239 published' — the trust surface is pending by the vendor's own statement (also FUNCTIONALITY.md: 'security frameworks according EN 18239 and EN 18246 to be delivered after publication of these standards')
 
- Verbatim:
+  Verbatim:
 
- > ` public string hashMD5 { get; set; } // not yet, to be handled when EN 18239 published; but must not be deleted because JS code needs it`
+  > `            public string hashMD5 { get; set; } // not yet, to be handled when EN 18239 published; but must not be deleted because JS code needs it`
 
 - **S6** (freeDPPserver/FreeDppDppFull.cs:71): the class name follows the EN's Annex A spelling 'SingleValuedDataElement' — the origin of the A3-class-name-drift findings; the comment cites the standard's annex as its source
 
- Verbatim:
+  Verbatim:
 
- > ` public string objectType { get; set; } = "SingleValuedDataElement";// laut annex 1 `
+  > `            public string objectType { get; set; } = "SingleValuedDataElement";// laut annex 1 `
 
 - **S7** (freeDPPserver/DppValidateController.cs:6): the server's own DPP validation endpoint is a test controller, 'not yet comletely implemented - just a test controller for dpp validation'
 
- Verbatim:
+  Verbatim:
 
- > `//oh260810 - not yet comletely implemented - just a test controller for dpp validation`
+  > `//oh260810 - not yet comletely implemented - just a test controller for dpp validation`
 
 - **S8** (freeDPPserver/DppValidateController.cs:18): the validator references Schemas/dpp-schema.json; no Schemas directory exists anywhere in the published freeDPPserver repo (working tree or PublishedVersion260813.zip)
 
- Verbatim:
+  Verbatim:
 
- > ` private readonly string _schemaPfad = Path.Combine("Schemas", "dpp-schema.json");`
+  > `    private readonly string _schemaPfad = Path.Combine("Schemas", "dpp-schema.json");`
 
 ## 4. open-dpp
 
@@ -782,21 +829,21 @@ info-severity coverage-observation codes:
 
 ### 4.2 open-dpp per-artifact results
 
-| Artifact | Outcome | Error findings | Distinct codes |
-|---|---|---|---|
-| battery-passport.json | not-applicable | 0 | 1 (format-not-en-18223) |
+| Artifact | Outcome | Error findings | Distinct codes | Carrier |
+|---|---|---|---|---|
+| battery-passport.json | not-applicable | 0 | 1 (format-not-en-18223) | 70400 B · exceeds QR v40-M |
 
 ### 4.3 open-dpp findings detail
 
 #### battery-passport.json — **not-applicable**
 
-Source: `conformance/competitors/open-dpp/artifacts/battery-passport.json`
+Source: `/Users/mulgogi/src/unidpp/unidpp-py/conformance/competitors/open-dpp/artifacts/battery-passport.json`
 
 - `format-not-en-18223` (info, path `$`): artifact declares format 'open-dpp:json' version '4.0'; carries top-level keys ['createdAt', 'environment', 'format', 'id', 'lastStatusChange', 'presentationConfiguration', 'updatedAt', 'version']; overlap with the EN 18223 header keys is [] (none or one). Coverage observation only — the conformance runner is the EU-profile runner; this format is out of its machine-checkable surface.
 
- Citation:
+  Citation:
 
- > EN 18223 Table 1 (4.1.2.1) header keys: digitalProductPassportId, uniqueProductIdentifier, granularity, dppSchemaVersion, dppStatus, lastUpdated, economicOperatorId, facilityId, contentSpecificationIds.
+  > EN 18223 Table 1 (4.1.2.1) header keys: digitalProductPassportId, uniqueProductIdentifier, granularity, dppSchemaVersion, dppStatus, lastUpdated, economicOperatorId, facilityId, contentSpecificationIds.
 
 
 ## 5. Coverage observations (where the runner's machine-checkable surface ends)

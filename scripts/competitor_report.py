@@ -47,6 +47,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from unidpp import carrier
 from unidpp.adapters.en18223 import (
     FixtureResult,
     ProfileFinding,
@@ -332,6 +333,9 @@ def _evaluate_artifact(entry: dict[str, Any]) -> dict[str, Any]:
             )
         )
         result.adaptations.append("coverage-observation")
+        # Carrier observation for the foreign artifact too (size only; the
+        # EN-18223 validator layers are not invoked).
+        result.carrier = carrier.measure(doc).to_dict()
         return result.to_dict()
 
     # EN 18223-shaped: run the validator layers with the structurally
@@ -696,6 +700,16 @@ def _markdown_report(report: dict[str, Any]) -> str:
         "The observation records the artifact's declared format/version "
         "and its top-level keys; the rationale is documented as the "
         "runner semantics.")
+    add("- Temporal layer: EN 18223-shaped artifacts additionally run the "
+        "DPP temporal profile (`unidpp.temporal`) — every timestamp field "
+        "against ISO 8601-1:2019 as impacted by Amd 1:2022, with "
+        "precise-path findings (e.g. a server-local timestamp with no "
+        "timezone designator).")
+    add("- Carrier column: canonical serialized size against the "
+        "ISO/IEC 18004 QR byte-capacity tables (`unidpp.carrier`, ported "
+        "from the CLI's tables). An observation only — carrier budgets "
+        "bind Tier-A carrier-embedded packs, not served documents; no "
+        "finding is raised from it.")
     add(
         f"- Outcome semantics: {report['outcomeSemantics']}"
     )
@@ -778,14 +792,15 @@ def _markdown_report(report: dict[str, Any]) -> str:
     add("")
     add("### 3.2 freeDPP per-artifact results")
     add("")
-    add("| Artifact | Outcome | Error findings | Distinct codes |")
-    add("|---|---|---|---|")
+    add("| Artifact | Outcome | Error findings | Distinct codes | Carrier |")
+    add("|---|---|---|---|---|")
     for r in v["results"]:
         errors = sum(1 for f in r["findings"] if f["severity"] == "error")
         distinct = sorted({f["code"] for f in r["findings"]})
         add(
             f"| {r['fixture']} | {r['outcome']} | {errors} | "
-            f"{len(distinct)} ({', '.join(distinct)}) |"
+            f"{len(distinct)} ({', '.join(distinct)}) | "
+            f"{carrier.render(r.get('carrier'))} |"
         )
     add("")
     add("### 3.3 freeDPP findings detail")
@@ -853,14 +868,15 @@ def _markdown_report(report: dict[str, Any]) -> str:
         add("")
     add("### 4.2 open-dpp per-artifact results")
     add("")
-    add("| Artifact | Outcome | Error findings | Distinct codes |")
-    add("|---|---|---|---|")
+    add("| Artifact | Outcome | Error findings | Distinct codes | Carrier |")
+    add("|---|---|---|---|---|")
     for r in v["results"]:
         errors = sum(1 for f in r["findings"] if f["severity"] == "error")
         distinct = sorted({f["code"] for f in r["findings"]})
         add(
             f"| {r['fixture']} | {r['outcome']} | {errors} | "
-            f"{len(distinct)} ({', '.join(distinct)}) |"
+            f"{len(distinct)} ({', '.join(distinct)}) | "
+            f"{carrier.render(r.get('carrier'))} |"
         )
     add("")
     add("### 4.3 open-dpp findings detail")

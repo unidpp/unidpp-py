@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-07T08:32:36Z",
+  "generatedAt": "2026-09-07T17:34:45Z",
   "suite": "unidpp-py competitor conformance — freeDPP and open-dpp published artifacts",
   "purpose": "Factual register of findings produced by running every machine-checkable artifact published by freeDPP and open-dpp through the same EN 18223 conformance pipeline that produced conformance/eu-profile/REPORT.md. Companion to the EU profile report. Reproducible: see per-vendor fetch commands in the vendor sections.",
   "runnerSemantics": "Findings are produced by `unidpp.adapters.en18223.validate_profile_fixture` exactly as used by the EU profile report — no runner semantics were altered for this exercise. Artifacts that are not EN 18223-shaped receive a single info-severity `format-not-en-18223` coverage observation and are skipped; they do not contribute error-severity findings. The runner reports PASS where it finds zero error-severity findings.",
@@ -15,7 +15,7 @@
     "passed": 0,
     "failed": 6,
     "notApplicable": 1,
-    "errorFindings": 245
+    "errorFindings": 251
   },
   "vendors": [
     {
@@ -32,10 +32,11 @@
         "passed": 0,
         "failed": 6,
         "notApplicable": 0,
-        "errorFindings": 245,
+        "errorFindings": 251,
         "findingsByAuditId": {
           "A1": 6,
           "A3": 170,
+          "A4": 6,
           "A6": 6,
           "C4": 6,
           "N3": 10,
@@ -50,6 +51,7 @@
           "N3-duplicate-element-id": 10,
           "N4-value-data-type-mismatch": 42,
           "N5-multivalued-child-key-divergence": 2,
+          "T7-timezone-missing": 6,
           "profile-header-schema": 9
         }
       },
@@ -70,7 +72,19 @@
             "PA3",
             "PA9"
           ],
-          "errorFindings": 4,
+          "errorFindings": 5,
+          "carrier": {
+            "sizeBytes": 2917,
+            "minQrByEc": {
+              "L": 40,
+              "M": null,
+              "Q": null,
+              "H": null
+            },
+            "declared": null,
+            "declaredCapacity": null,
+            "fitsDeclared": null
+          },
           "findings": [
             {
               "code": "A1-granularity-casing",
@@ -111,6 +125,14 @@
               "auditRef": "C4",
               "citation": "[\"EN 01234-5:2027\"]",
               "path": "$.contentSpecificationIds"
+            },
+            {
+              "code": "T7-timezone-missing",
+              "severity": "error",
+              "message": "'2026-06-17T23:20:58.0000000' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))",
+              "auditRef": "A4",
+              "citation": "\"lastUpdated\": \"2026-06-17T23:20:58.0000000\"",
+              "path": "$.lastUpdated"
             }
           ]
         },
@@ -128,7 +150,19 @@
             "PA3",
             "PA9"
           ],
-          "errorFindings": 87,
+          "errorFindings": 88,
+          "carrier": {
+            "sizeBytes": 15728,
+            "minQrByEc": {
+              "L": null,
+              "M": null,
+              "Q": null,
+              "H": null
+            },
+            "declared": null,
+            "declaredCapacity": null,
+            "fitsDeclared": null
+          },
           "findings": [
             {
               "code": "A1-granularity-casing",
@@ -833,6 +867,14 @@
               "auditRef": "C4",
               "citation": "[\"EN 01234-5:2027\"]",
               "path": "$.contentSpecificationIds"
+            },
+            {
+              "code": "T7-timezone-missing",
+              "severity": "error",
+              "message": "'2026-06-17T23:20:58' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))",
+              "auditRef": "A4",
+              "citation": "\"lastUpdated\": \"2026-06-17T23:20:58\"",
+              "path": "$.lastUpdated"
             }
           ]
         },
@@ -850,7 +892,19 @@
             "PA3",
             "PA9"
           ],
-          "errorFindings": 87,
+          "errorFindings": 88,
+          "carrier": {
+            "sizeBytes": 15728,
+            "minQrByEc": {
+              "L": null,
+              "M": null,
+              "Q": null,
+              "H": null
+            },
+            "declared": null,
+            "declaredCapacity": null,
+            "fitsDeclared": null
+          },
           "findings": [
             {
               "code": "A1-granularity-casing",
@@ -1555,6 +1609,14 @@
               "auditRef": "C4",
               "citation": "[\"EN 01234-5:2027\"]",
               "path": "$.contentSpecificationIds"
+            },
+            {
+              "code": "T7-timezone-missing",
+              "severity": "error",
+              "message": "'2026-06-17T23:20:58' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))",
+              "auditRef": "A4",
+              "citation": "\"lastUpdated\": \"2026-06-17T23:20:58\"",
+              "path": "$.lastUpdated"
             }
           ]
         },
@@ -1574,7 +1636,19 @@
             "PA3",
             "PA9"
           ],
-          "errorFindings": 3,
+          "errorFindings": 4,
+          "carrier": {
+            "sizeBytes": 1410,
+            "minQrByEc": {
+              "L": 27,
+              "M": 31,
+              "Q": 37,
+              "H": null
+            },
+            "declared": null,
+            "declaredCapacity": null,
+            "fitsDeclared": null
+          },
           "findings": [
             {
               "code": "A1-granularity-casing",
@@ -1607,6 +1681,14 @@
               "auditRef": "C4",
               "citation": "[\"EN 13162:2012+A1:2015\"]",
               "path": "$.contentSpecificationIds"
+            },
+            {
+              "code": "T7-timezone-missing",
+              "severity": "error",
+              "message": "'2026-04-01T16:07:24.0000000' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))",
+              "auditRef": "A4",
+              "citation": "\"lastUpdated\": \"2026-04-01T16:07:24.0000000\"",
+              "path": "$.lastUpdated"
             }
           ]
         },
@@ -1624,7 +1706,19 @@
             "PA3",
             "PA9"
           ],
-          "errorFindings": 32,
+          "errorFindings": 33,
+          "carrier": {
+            "sizeBytes": 6924,
+            "minQrByEc": {
+              "L": null,
+              "M": null,
+              "Q": null,
+              "H": null
+            },
+            "declared": null,
+            "declaredCapacity": null,
+            "fitsDeclared": null
+          },
           "findings": [
             {
               "code": "A1-granularity-casing",
@@ -1889,6 +1983,14 @@
               "auditRef": "C4",
               "citation": "[\"EN 13162:2012+A1:2015\"]",
               "path": "$.contentSpecificationIds"
+            },
+            {
+              "code": "T7-timezone-missing",
+              "severity": "error",
+              "message": "'2026-04-01T16:07:24' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))",
+              "auditRef": "A4",
+              "citation": "\"lastUpdated\": \"2026-04-01T16:07:24\"",
+              "path": "$.lastUpdated"
             }
           ]
         },
@@ -1906,7 +2008,19 @@
             "PA3",
             "PA9"
           ],
-          "errorFindings": 32,
+          "errorFindings": 33,
+          "carrier": {
+            "sizeBytes": 6924,
+            "minQrByEc": {
+              "L": null,
+              "M": null,
+              "Q": null,
+              "H": null
+            },
+            "declared": null,
+            "declaredCapacity": null,
+            "fitsDeclared": null
+          },
           "findings": [
             {
               "code": "A1-granularity-casing",
@@ -2171,6 +2285,14 @@
               "auditRef": "C4",
               "citation": "[\"EN 13162:2012+A1:2015\"]",
               "path": "$.contentSpecificationIds"
+            },
+            {
+              "code": "T7-timezone-missing",
+              "severity": "error",
+              "message": "'2026-04-01T16:07:24' carries no timezone designator; timestamps are UTC-based — use 'Z' or a numeric offset ±hh:mm (local time is a presentation concern; EN 18223 Table 1 (4.1.2.1): 'String formatted as Timestamp UTC-based according to ISO 8601-1:2019' (as impacted by ISO 8601-1:2019/A1:2022))",
+              "auditRef": "A4",
+              "citation": "\"lastUpdated\": \"2026-04-01T16:07:24\"",
+              "path": "$.lastUpdated"
             }
           ]
         }
@@ -2202,13 +2324,25 @@
           "kind": "competitor-artifact",
           "clause": "",
           "title": "battery-passport.json",
-          "source": "conformance/competitors/open-dpp/artifacts/battery-passport.json",
+          "source": "/Users/mulgogi/src/unidpp/unidpp-py/conformance/competitors/open-dpp/artifacts/battery-passport.json",
           "outcome": "not-applicable",
           "parsed": true,
           "adaptations": [
             "coverage-observation"
           ],
           "errorFindings": 0,
+          "carrier": {
+            "sizeBytes": 70400,
+            "minQrByEc": {
+              "L": null,
+              "M": null,
+              "Q": null,
+              "H": null
+            },
+            "declared": null,
+            "declaredCapacity": null,
+            "fitsDeclared": null
+          },
           "findings": [
             {
               "code": "format-not-en-18223",

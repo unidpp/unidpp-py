@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-07T02:07:50Z",
+  "generatedAt": "2026-09-07T17:34:45Z",
   "suite": "unidpp EU-profile conformance — EN 18223:2026 example corpus",
   "purpose": "Evidence annex for paper 4 (P3 deliverable)",
   "standard": "EN 18223:2026 Digital Product Passport — System interoperability (CEN/CLC/JTC 24, final text May 2026, corrected and reissued 2 June 2026)",
   "sources": {
-    "adocRoot": "EN sources (local corpus)/en-18223-2026/sections-en",
+    "adocRoot": "references/internal-paid-standards/sources/en-18223-2026/sections-en",
     "auditRegister": "the UniDPP defect register",
     "extraction": "payloads extracted verbatim from the internal Metanorma conversion (raw/); corrected/ copies fix PDF-typography artifacts only (curly quotes → straight; en/em dashes → hyphens inside quoted timestamps)",
     "handling": "source is an internal conversion of a purchased single-user SIST license (see document-en.adoc); same constraints apply to this report and its fixtures — never redistribute"
@@ -131,7 +131,7 @@
       "kind": "json-compressed",
       "clause": "5.2.4",
       "title": "Serialization of the DigitalProductPassport class (DPP header)",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 68-83)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 68-83)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -144,6 +144,18 @@
         "PA9"
       ],
       "errorFindings": 3,
+      "carrier": {
+        "sizeBytes": 362,
+        "minQrByEc": {
+          "L": 12,
+          "M": 14,
+          "Q": 17,
+          "H": 20
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": [
         {
           "code": "A1-granularity-casing",
@@ -184,7 +196,7 @@
       "kind": "json-compressed",
       "clause": "5.2.5",
       "title": "DataElementCollection with a combination of different simple and complex types",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 96-117)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 96-117)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -195,6 +207,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 206,
+        "minQrByEc": {
+          "L": 9,
+          "M": 10,
+          "Q": 13,
+          "H": 15
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -202,7 +226,7 @@
       "kind": "json-compressed",
       "clause": "5.2.6",
       "title": "standalone SingleValueDataElements",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 130-134)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 130-134)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -213,6 +237,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 67,
+        "minQrByEc": {
+          "L": 4,
+          "M": 5,
+          "Q": 6,
+          "H": 8
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -220,7 +256,7 @@
       "kind": "json-compressed",
       "clause": "5.2.6",
       "title": "SingleValueDataElements inside a complex data type",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 143-154)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 143-154)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -231,6 +267,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 102,
+        "minQrByEc": {
+          "L": 5,
+          "M": 6,
+          "Q": 8,
+          "H": 10
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -238,7 +286,7 @@
       "kind": "json-compressed",
       "clause": "5.2.7",
       "title": "Array of native types",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 166-175)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 166-175)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -249,6 +297,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 35,
+        "minQrByEc": {
+          "L": 3,
+          "M": 3,
+          "Q": 4,
+          "H": 5
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -256,7 +316,7 @@
       "kind": "json-compressed",
       "clause": "5.2.7",
       "title": "Array of Objects",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 182-196)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 182-196)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -267,6 +327,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 107,
+        "minQrByEc": {
+          "L": 6,
+          "M": 7,
+          "Q": 8,
+          "H": 10
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -274,7 +346,7 @@
       "kind": "json-compressed",
       "clause": "5.2.8",
       "title": "referencing the operating instruction of a product",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 207-214)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 207-214)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -285,6 +357,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 176,
+        "minQrByEc": {
+          "L": 8,
+          "M": 9,
+          "Q": 11,
+          "H": 13
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -292,7 +376,7 @@
       "kind": "json-compressed",
       "clause": "5.2.9",
       "title": "The productDescription provided in multiple languages",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 226-243)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 226-243)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -303,6 +387,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 146,
+        "minQrByEc": {
+          "L": 7,
+          "M": 8,
+          "Q": 10,
+          "H": 12
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -310,7 +406,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 1",
       "title": "DataElementCollection as fully expanded JSON object",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 19-66)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 19-66)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -318,6 +414,18 @@
         "PA6"
       ],
       "errorFindings": 4,
+      "carrier": {
+        "sizeBytes": 1043,
+        "minQrByEc": {
+          "L": 23,
+          "M": 26,
+          "Q": 32,
+          "H": 36
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": [
         {
           "code": "A3-class-name-drift",
@@ -366,11 +474,12 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 2",
       "title": "DataElementCollection as fully expanded JSON object with different dictionary references",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 77-95)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 77-95)",
       "outcome": "fail",
       "parsed": false,
       "adaptations": [],
       "errorFindings": 1,
+      "carrier": null,
       "findings": [
         {
           "code": "N1-example-not-valid-json",
@@ -387,7 +496,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 3",
       "title": "SingleValuedDataElement as fully expanded JSON object",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 108-125)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 108-125)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -395,6 +504,18 @@
         "PA6"
       ],
       "errorFindings": 4,
+      "carrier": {
+        "sizeBytes": 371,
+        "minQrByEc": {
+          "L": 13,
+          "M": 15,
+          "Q": 18,
+          "H": 20
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": [
         {
           "code": "A3-class-name-drift",
@@ -435,7 +556,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 4",
       "title": "MultiValuedDataElement as a fully expanded JSON object",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 138-170)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 138-170)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -443,6 +564,18 @@
         "PA6"
       ],
       "errorFindings": 8,
+      "carrier": {
+        "sizeBytes": 729,
+        "minQrByEc": {
+          "L": 19,
+          "M": 22,
+          "Q": 26,
+          "H": 30
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": [
         {
           "code": "N5-multivalued-child-key-divergence",
@@ -523,11 +656,12 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 5",
       "title": "RelatedResource as a fully expanded JSON object",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 183-195)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 183-195)",
       "outcome": "fail",
       "parsed": false,
       "adaptations": [],
       "errorFindings": 2,
+      "carrier": null,
       "findings": [
         {
           "code": "N6-trailing-comma",
@@ -552,7 +686,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 6",
       "title": "MultiLanguageDataElement as a fully expanded JSON object",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 208-230)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 208-230)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -560,6 +694,18 @@
         "PA6"
       ],
       "errorFindings": 1,
+      "carrier": {
+        "sizeBytes": 359,
+        "minQrByEc": {
+          "L": 12,
+          "M": 14,
+          "Q": 17,
+          "H": 20
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": [
         {
           "code": "A5-language-tag-unassigned",
@@ -576,7 +722,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 1",
       "title": "DigitalProductPassport serialized as XML",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 15-34)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 15-34)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -590,6 +736,18 @@
         "PA9"
       ],
       "errorFindings": 3,
+      "carrier": {
+        "sizeBytes": 385,
+        "minQrByEc": {
+          "L": 13,
+          "M": 15,
+          "Q": 18,
+          "H": 21
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": [
         {
           "code": "A1-granularity-casing",
@@ -630,7 +788,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 2",
       "title": "DataElementCollection serialized as XML",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 47-70)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 47-70)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -641,6 +799,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 224,
+        "minQrByEc": {
+          "L": 9,
+          "M": 11,
+          "Q": 13,
+          "H": 16
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -648,7 +818,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 3",
       "title": "Standalone SingleValuedDataElement as XML",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 83-89)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 83-89)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -659,6 +829,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 85,
+        "minQrByEc": {
+          "L": 5,
+          "M": 6,
+          "Q": 7,
+          "H": 9
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -666,7 +848,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 4",
       "title": "SingleValuedDataElement inside a complex data type as XML",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 98-111)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 98-111)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -677,6 +859,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 120,
+        "minQrByEc": {
+          "L": 6,
+          "M": 7,
+          "Q": 9,
+          "H": 11
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -684,7 +878,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 5",
       "title": "MultiValuedDataElement (Array of native types) as XML",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 124-133)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 124-133)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -695,6 +889,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 53,
+        "minQrByEc": {
+          "L": 3,
+          "M": 4,
+          "Q": 5,
+          "H": 6
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -702,7 +908,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 6",
       "title": "MultiValuedDataElement (Array of objects) as XML",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 146-156)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 146-156)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -713,6 +919,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 125,
+        "minQrByEc": {
+          "L": 6,
+          "M": 8,
+          "Q": 9,
+          "H": 11
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -720,7 +938,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 7",
       "title": "RelatedResource as XML",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 169-181)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 169-181)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -731,6 +949,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 209,
+        "minQrByEc": {
+          "L": 9,
+          "M": 10,
+          "Q": 13,
+          "H": 15
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     },
     {
@@ -738,7 +968,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 8",
       "title": "MultiLanguageDataElement as XML",
-      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 194-212)",
+      "source": "references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 194-212)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -749,6 +979,18 @@
         "PA6"
       ],
       "errorFindings": 0,
+      "carrier": {
+        "sizeBytes": 164,
+        "minQrByEc": {
+          "L": 8,
+          "M": 9,
+          "Q": 11,
+          "H": 13
+        },
+        "declared": null,
+        "declaredCapacity": null,
+        "fitsDeclared": null
+      },
       "findings": []
     }
   ],

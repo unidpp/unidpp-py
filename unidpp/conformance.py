@@ -24,6 +24,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from . import carrier, temporal
 from . import model as M
 from .eventlog import verify_chain
 from .fixtures import build_car, build_laptop
@@ -33,6 +34,7 @@ __all__ = [
     "CHECK_REGISTRY",
     "ConformanceCheck",
     "Fixture",
+    "carrier_fixtures",
     "load_fixtures",
     "main",
     "negative_fixtures_a1_a6",
@@ -379,6 +381,38 @@ def _check_en18223(fixture: dict[str, Any]) -> list[M.Finding]:
     ]
 
 
+def _check_temporal(fixture: dict[str, Any]) -> list[M.Finding]:
+    """Validate every timestamp field in the fixture against the DPP
+    temporal profile (ISO 8601-1:2019 incl. Amd 1:2022 disambiguation);
+    findings carry the precise JSONPath (unidpp.temporal)."""
+    subjects: list[Any] = [
+        fixture[key]
+        for key in ("manifest", "document", "payload", "events", "links")
+        if key in fixture
+    ]
+    if not subjects:
+        subjects = [fixture]
+    findings: list[M.Finding] = []
+    for subject in subjects:
+        for tf in temporal.validate_document(subject):
+            findings.append(
+                _f("error", tf.code, f"{tf.path}: {tf.message}")
+            )
+    return findings
+
+
+def _check_carrier(fixture: dict[str, Any]) -> list[M.Finding]:
+    """Check the serialized payload size against the declared carrier
+    class (ISO/IEC 18004 QR capacity tables ported from the CLI;
+    unidpp.carrier). Payloads without a declared class get a measurement
+    only — carrier budgets bind Tier-A packs, not served documents."""
+    declared = fixture.get("declaredCarrier")
+    if not declared:
+        return []
+    payload = fixture.get("payload", fixture)
+    return carrier.check_payload(payload, declared)
+
+
 def positive_fixtures() -> list[Fixture]:
     laptop = build_laptop()
     car = build_car()
@@ -416,6 +450,55 @@ def positive_fixtures() -> list[Fixture]:
     ]
 
 
+# A compact EN 18223-style document whose canonical (compressed-form)
+# serialization is 406 bytes — inside the QR v15-M band (v14-M holds 362,
+# v15-M holds 412; ISO/IEC 18004 byte-mode capacity). This is the fixture
+# "known to fit QR v15-M"; the EN's own Annex A Example 3 lands in the
+# same band (371 bytes, see the EU-profile report carrier column).
+_CARRIER_FIT_PAYLOAD: dict[str, Any] = {
+    "digitalProductPassportId": "urn:unidpp:dpp:example-3",
+    "uniqueProductIdentifier": "urn:unidpp:inst:84120099012345",
+    "granularity": "model",
+    "dppSchemaVersion": "EN18223:v1.0",
+    "dppStatus": "active",
+    "lastUpdated": "2025-08-22T03:12:00Z",
+    "economicOperatorId": "urn:unidpp:eo:example",
+    "maximumPressure": {"valueDataType": "xsd:float", "value": 750.5},
+    "recycledContentPercentage": {"valueDataType": "xsd:integer", "value": 42},
+}
+
+
+def carrier_fixtures() -> list[Fixture]:
+    """Carrier-budget fixtures: one payload inside its declared QR class,
+    one over it (framework spec 10.4: over-budget fails loudly, never
+    truncates)."""
+    oversized = dict(_CARRIER_FIT_PAYLOAD)
+    oversized["dataElements"] = ["z" * 5000]
+    return [
+        Fixture(
+            name="dpp-fits-qr-v15-m",
+            kind="carrier",
+            source="compact EN 18223-style document, canonical size 406 B "
+            "(QR v15-M capacity 412 B, ISO/IEC 18004 via the CLI tables)",
+            data={
+                "declaredCarrier": "qr-v15-M",
+                "payload": _CARRIER_FIT_PAYLOAD,
+            },
+        ),
+        Fixture(
+            name="dpp-over-qr-v15-m",
+            kind="carrier",
+            source="the same document with a 5 kB data-element payload "
+            "(canonical size 5 464 B vs the declared 412 B class)",
+            data={
+                "declaredCarrier": "qr-v15-M",
+                "payload": oversized,
+            },
+            expect_code="C1-carrier-over-budget",
+        ),
+    ]
+
+
 CHECK_REGISTRY: dict[str, ConformanceCheck] = {
     "positive-corpus": ConformanceCheck(
         id="positive-corpus",
@@ -426,6 +509,18 @@ CHECK_REGISTRY: dict[str, ConformanceCheck] = {
         id="audit-negative",
         title="AUDIT.md A1-A6 defects fail validation with precise findings",
         fn=_check_en18223,
+    ),
+    "temporal-conformance": ConformanceCheck(
+        id="temporal-conformance",
+        title="Every timestamp field conforms to the DPP temporal profile "
+        "(ISO 8601-1:2019 incl. Amd 1:2022 disambiguation)",
+        fn=_check_temporal,
+    ),
+    "carrier-budget": ConformanceCheck(
+        id="carrier-budget",
+        title="Serialized payload sizes fit their declared carrier class "
+        "(ISO/IEC 18004 QR capacity tables, ported from the CLI)",
+        fn=_check_carrier,
     ),
 }
 
@@ -469,6 +564,8 @@ def run_conformance(
     for fixture in [f for f in fixtures if f.kind == "positive"] + positive_fixtures():
         total += 1
         findings = CHECK_REGISTRY["positive-corpus"].fn(fixture.data)
+        temporal_findings = CHECK_REGISTRY["temporal-conformance"].fn(fixture.data)
+        findings += temporal_findings
         ok = not findings
         passed += ok
         results.append(
@@ -477,6 +574,8 @@ def run_conformance(
                 "kind": "positive",
                 "source": fixture.source,
                 "outcome": "pass" if ok else "fail",
+                "temporal": _temporal_summary(fixture.data, temporal_findings),
+                "carrier": carrier.measure(fixture.data).to_dict(),
                 "findings": [f.__dict__ for f in findings],
             }
         )
@@ -489,6 +588,8 @@ def run_conformance(
     for name, n in builtin.items():
         total += 1
         findings = CHECK_REGISTRY["audit-negative"].fn(n)
+        temporal_findings = CHECK_REGISTRY["temporal-conformance"].fn(n)
+        findings += temporal_findings
         codes = [f.code for f in findings]
         expected = n["expectCode"]
         ok = bool(findings) and (expected is None or expected in codes)
@@ -500,12 +601,16 @@ def run_conformance(
                 "source": n["source"],
                 "outcome": "pass" if ok else "fail",
                 "expectedCode": expected,
+                "temporal": _temporal_summary(n, temporal_findings),
+                "carrier": carrier.measure(n["document"]).to_dict(),
                 "findings": [f.__dict__ for f in findings],
             }
         )
     for fixture in negatives:
         total += 1
         findings = CHECK_REGISTRY["audit-negative"].fn(fixture.data)
+        temporal_findings = CHECK_REGISTRY["temporal-conformance"].fn(fixture.data)
+        findings += temporal_findings
         codes = [f.code for f in findings]
         ok = bool(findings) and (
             fixture.expect_code is None or fixture.expect_code in codes
@@ -518,6 +623,37 @@ def run_conformance(
                 "source": fixture.source,
                 "outcome": "pass" if ok else "fail",
                 "expectedCode": fixture.expect_code,
+                "temporal": _temporal_summary(fixture.data, temporal_findings),
+                "carrier": carrier.measure(fixture.data.get("document", fixture.data)).to_dict(),
+                "findings": [f.__dict__ for f in findings],
+            }
+        )
+
+    # Carrier corpus: payloads checked against their declared carrier class.
+    for fixture in [f for f in fixtures if f.kind == "carrier"] + carrier_fixtures():
+        total += 1
+        findings = CHECK_REGISTRY["carrier-budget"].fn(fixture.data)
+        temporal_findings = CHECK_REGISTRY["temporal-conformance"].fn(fixture.data)
+        findings += temporal_findings
+        codes = [f.code for f in findings]
+        ok = (
+            fixture.expect_code in codes
+            if fixture.expect_code
+            else not findings
+        )
+        passed += ok
+        results.append(
+            {
+                "fixture": fixture.name,
+                "kind": "carrier",
+                "source": fixture.source,
+                "outcome": "pass" if ok else "fail",
+                "expectedCode": fixture.expect_code,
+                "temporal": _temporal_summary(fixture.data, temporal_findings),
+                "carrier": carrier.measure(
+                    fixture.data.get("payload", fixture.data),
+                    declared=fixture.data.get("declaredCarrier"),
+                ).to_dict(),
                 "findings": [f.__dict__ for f in findings],
             }
         )
@@ -530,6 +666,20 @@ def run_conformance(
         "passed": passed,
         "failed": total - passed,
         "results": results,
+    }
+
+
+def _temporal_summary(data: dict[str, Any], findings: list[M.Finding]) -> dict[str, Any]:
+    """Per-fixture temporal column: fields examined vs violations found."""
+    subjects: list[Any] = [
+        data[key] for key in ("manifest", "document", "payload", "events", "links")
+        if key in data
+    ] or [data]
+    fields = sum(temporal.count_timestamp_fields(s) for s in subjects)
+    return {
+        "fields": fields,
+        "violations": len(findings),
+        "codes": sorted({f.code for f in findings}),
     }
 
 
@@ -548,15 +698,28 @@ def write_markdown_report(report: dict[str, Any], path: str | Path) -> Path:
         "",
         f"Generated: {report['generatedAt']}",
         "",
+        f"- Checks: {', '.join(report['checks'])}",
         f"- Total fixtures: **{report['total']}**",
         f"- Passed: **{report['passed']}**",
         f"- Failed: **{report['failed']}**",
         "",
-        "| Fixture | Kind | Outcome |",
-        "|---|---|---|",
+        (
+            "Columns — Temporal: timestamp fields examined · violations (DPP "
+            "temporal profile, ISO 8601-1:2019 incl. Amd 1:2022). Carrier: "
+            "canonical serialized size vs the ISO/IEC 18004 QR capacity tables "
+            "(ported from the CLI)."
+        ),
+        "",
+        "| Fixture | Kind | Outcome | Temporal | Carrier |",
+        "|---|---|---|---|---|",
     ]
     for r in report["results"]:
-        lines.append(f"| {r['fixture']} | {r['kind']} | {r['outcome']} |")
+        temporal_col = _render_temporal(r.get("temporal"))
+        carrier_col = carrier.render(r.get("carrier"))
+        lines.append(
+            f"| {r['fixture']} | {r['kind']} | {r['outcome']} | "
+            f"{temporal_col} | {carrier_col} |"
+        )
     lines.append("")
     for r in report["results"]:
         if not r["findings"]:
@@ -571,6 +734,16 @@ def write_markdown_report(report: dict[str, Any], path: str | Path) -> Path:
         lines.append("")
     p.write_text("\n".join(lines), encoding="utf-8")
     return p
+
+
+def _render_temporal(summary: dict[str, Any] | None) -> str:
+    if summary is None:
+        return "—"
+    violations = summary["violations"]
+    detail = f"{summary['fields']} fields · {violations} violation(s)"
+    if violations and summary.get("codes"):
+        detail += f" ({', '.join(summary['codes'])})"
+    return detail
 
 
 def main(argv: list[str] | None = None) -> int:
