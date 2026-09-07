@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "unidpp"
+version = "0.1.0"
+description = "UniDPP Python library: mirrored model, commitment-chained event log, verification-pipeline harness, conformance runners, EPCIS/UNTP adapters"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "UniDPP contributors" }]
+keywords = ["digital-product-passport", "dpp", "unidpp", "traceability", "espr"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+dev = ["pytest>=7", "build"]
+
+[project.urls]
+Homepage = "https://github.com/unidpp/unidpp-py"
+
+[tool.setuptools.packages.find]
+include = ["unidpp*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
