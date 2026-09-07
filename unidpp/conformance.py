@@ -19,28 +19,28 @@ from __future__ import annotations
 import json
 import re
 import sys
-from dataclasses import dataclass, field
+from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Mapping
+from typing import Any
 
 from . import model as M
-from .canonical import canonical_json
 from .eventlog import verify_chain
 from .fixtures import build_car, build_laptop
-from .validate import validate, ValidationIssue
+from .validate import ValidationIssue
 
 __all__ = [
+    "CHECK_REGISTRY",
     "ConformanceCheck",
     "Fixture",
-    "CHECK_REGISTRY",
+    "load_fixtures",
+    "main",
     "negative_fixtures_a1_a6",
     "positive_fixtures",
-    "load_fixtures",
     "run_conformance",
+    "validate_en18223_document",
     "write_json_report",
     "write_markdown_report",
-    "validate_en18223_document",
-    "main",
 ]
 
 # ---------------------------------------------------------------------------
@@ -62,11 +62,7 @@ EN18223_SCHEMA_VERSION_RE = re.compile(
 # ISO 639-1 assigned primary subtags — conformance snapshot (extendable).
 # A5: "gr" is NOT assigned (Greek is "el").
 ISO639_1_ASSIGNED = frozenset(
-    "aa ab af am ar as az ba be bg bn bo br bs ca cs cy da de dz el en eo es "
-    "et eu fa fi fo fr fy ga gd gl gu he hi hr hu hy ia id is it ja ka kk km "
-    "kn ko ku ky la lg lt lv mk ml mn mr ms mt ne nl no oc om or pa pl ps pt "
-    "qu ro ru sa sd si sk sl so sq sr sv sw ta te tg th tk tl tr tt ug uk ur "
-    "uz vi vo wa yo zh zu".split()
+    ["aa", "ab", "af", "am", "ar", "as", "az", "ba", "be", "bg", "bn", "bo", "br", "bs", "ca", "cs", "cy", "da", "de", "dz", "el", "en", "eo", "es", "et", "eu", "fa", "fi", "fo", "fr", "fy", "ga", "gd", "gl", "gu", "he", "hi", "hr", "hu", "hy", "ia", "id", "is", "it", "ja", "ka", "kk", "km", "kn", "ko", "ku", "ky", "la", "lg", "lt", "lv", "mk", "ml", "mn", "mr", "ms", "mt", "ne", "nl", "no", "oc", "om", "or", "pa", "pl", "ps", "pt", "qu", "ro", "ru", "sa", "sd", "si", "sk", "sl", "so", "sq", "sr", "sv", "sw", "ta", "te", "tg", "th", "tk", "tl", "tr", "tt", "ug", "uk", "ur", "uz", "vi", "vo", "wa", "yo", "zh", "zu"]
 )
 
 _BCP47_RE = re.compile(
@@ -93,25 +89,24 @@ def validate_en18223_document(doc: Mapping[str, Any]) -> list[ValidationIssue]:
 
     # A1: granularity enumeration is lowercase (model, batch, item).
     gran = doc.get("granularity")
-    if gran is not None:
-        if gran not in EN18223_GRANULARITIES:
-            if str(gran).lower() in EN18223_GRANULARITIES:
-                issues.append(
-                    _issue(
-                        "$.granularity",
-                        "A1-granularity-casing",
-                        f"granularity {gran!r} violates the normative lowercase "
-                        f"enumeration {list(EN18223_GRANULARITIES)} (EN 18223 §4.1.2.2)",
-                    )
+    if gran is not None and gran not in EN18223_GRANULARITIES:
+        if str(gran).lower() in EN18223_GRANULARITIES:
+            issues.append(
+                _issue(
+                    "$.granularity",
+                    "A1-granularity-casing",
+                    f"granularity {gran!r} violates the normative lowercase "
+                    f"enumeration {list(EN18223_GRANULARITIES)} (EN 18223 §4.1.2.2)",
                 )
-            else:
-                issues.append(
-                    _issue(
-                        "$.granularity",
-                        "granularity-enum",
-                        f"granularity {gran!r} not in {list(EN18223_GRANULARITIES)}",
-                    )
+            )
+        else:
+            issues.append(
+                _issue(
+                    "$.granularity",
+                    "granularity-enum",
+                    f"granularity {gran!r} not in {list(EN18223_GRANULARITIES)}",
                 )
+            )
 
     # A2: dppStatus enumeration is lowercase.
     status = doc.get("dppStatus")
@@ -149,8 +144,11 @@ def validate_en18223_document(doc: Mapping[str, Any]) -> list[ValidationIssue]:
     def walk(node: Any, path: str) -> None:
         if isinstance(node, Mapping):
             cls = node.get("class") or node.get("className") or node.get("type")
-            if isinstance(cls, str) and cls.endswith("DataElement"):
-                if cls not in EN18223_CLASS_NAMES:
+            if (
+                isinstance(cls, str)
+                and cls.endswith("DataElement")
+                and cls not in EN18223_CLASS_NAMES
+            ):
                     issues.append(
                         _issue(
                             path,
@@ -209,8 +207,9 @@ def validate_en18223_document(doc: Mapping[str, Any]) -> list[ValidationIssue]:
 
     # A6: schema-version placeholder / no grammar.
     sv = doc.get("dppSchemaVersion")
-    if sv is not None:
-        if not isinstance(sv, str) or not EN18223_SCHEMA_VERSION_RE.match(sv):
+    if sv is not None and (
+        not isinstance(sv, str) or not EN18223_SCHEMA_VERSION_RE.match(sv)
+    ):
             issues.append(
                 _issue(
                     "$.dppSchemaVersion",

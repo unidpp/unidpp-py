@@ -110,13 +110,12 @@ def _check(
     if "allOf" in schema:
         for sub in schema["allOf"]:
             _check(instance, sub, root, path, issues)
-    if "anyOf" in schema:
-        if not any(
-            not _validate_nested(instance, sub, root) for sub in schema["anyOf"]
-        ):
-            issues.append(
-                ValidationIssue(path, "anyOf", "value matches no schemas")
-            )
+    if "anyOf" in schema and not any(
+        not _validate_nested(instance, sub, root) for sub in schema["anyOf"]
+    ):
+        issues.append(
+            ValidationIssue(path, "anyOf", "value matches no schemas")
+        )
     if "oneOf" in schema:
         matches = sum(
             1 for sub in schema["oneOf"] if not _validate_nested(instance, sub, root)

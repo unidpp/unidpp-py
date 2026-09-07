@@ -1,14 +1,13 @@
 """Verification pipeline: readings, freshness verdicts, coverage reports,
 crypto slots with the ECDSA-None degrade placeholder and a real HMAC slot."""
 
-from unidpp.canonical import sha256_hex
 from unidpp.model import (
     CriticalSafety,
     LogCommitment,
     ProductIdentifier,
     RevocationRecord,
-    TierAProfileRef,
     TierAPack,
+    TierAProfileRef,
     Validity,
 )
 from unidpp.verify import (
@@ -16,7 +15,6 @@ from unidpp.verify import (
     EcdsaNoneSlot,
     HmacSha256Slot,
     PublicKeyMaterial,
-    SignerKey,
     VerifyOptions,
     assess_freshness,
     default_slots,

@@ -3,4 +3,4 @@
 from .car import build_car
 from .laptop import build_laptop
 
-__all__ = ["build_laptop", "build_car"]
+__all__ = ["build_car", "build_laptop"]

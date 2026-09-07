@@ -27,11 +27,11 @@ from typing import Any
 
 __all__ = [
     "canonical_json",
-    "sha256_hex",
-    "to_hex",
-    "to_base64",
-    "from_base64",
     "commitment",
+    "from_base64",
+    "sha256_hex",
+    "to_base64",
+    "to_hex",
 ]
 
 
@@ -102,7 +102,7 @@ def from_base64(text: str) -> bytes:
     pad = (-len(cleaned)) % 4
     try:
         return base64.b64decode(cleaned + "=" * pad, validate=True)
-    except Exception as exc:  # noqa: BLE001 - mirror TS: throw on bad input
+    except Exception as exc:
         raise ValueError(f"invalid base64: {exc}") from exc
 
 

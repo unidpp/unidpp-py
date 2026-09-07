@@ -24,82 +24,83 @@ Plain stdlib dataclasses with ``__post_init__`` validation; no pydantic.
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
-from typing import Any, Mapping
+from typing import Any
 
 __all__ = [
-    "ModelError",
-    "IDENTIFIER_SCHEMES",
-    "IDENTIFIER_GRANULARITIES",
-    "IDENTIFIER_STATES",
+    "ACTOR_ROLES",
     "CAPABILITY_CLASSES",
-    "TRUTH_MODES",
-    "TRUST_MARKERS",
-    "MARKER_ORDER",
-    "SUITES",
-    "REVOCATION_REASONS",
-    "RETROACTIVE_REASONS",
-    "VERIFICATION_READINGS",
-    "RELATIONSHIP_TYPES",
+    "CARRIER_BUDGETS",
+    "CLASS_CAPABILITY",
     "EDGE_VISIBILITY_CLASSES",
-    "RECOVERABILITIES",
+    "EVENT_TYPES",
+    "IDENTIFIER_GRANULARITIES",
+    "IDENTIFIER_SCHEMES",
+    "IDENTIFIER_STATES",
+    "MARKER_ORDER",
     "PAIRING_MODES",
     "PASSPORT_STATUSES",
-    "EVENT_TYPES",
-    "ACTOR_ROLES",
-    "CLASS_CAPABILITY",
-    "CARRIER_BUDGETS",
-    "ProductIdentifier",
-    "TypeReference",
-    "identifier_equals",
-    "same_identity",
-    "CapabilityProfile",
-    "freshness_satisfiable",
-    "compare_durations",
-    "parse_duration",
-    "marker_at_least",
-    "SignatureFraming",
-    "RevocationRecord",
-    "TaintRecord",
-    "signature_voided",
-    "ProfileAxis",
-    "TriggerPredicate",
-    "RegistryItemRef",
-    "TrustRequirements",
-    "ProfileResolution",
-    "EffectiveWindow",
-    "ProfileDefinition",
-    "ProfileBinding",
-    "ChildReference",
-    "InstallationBinding",
-    "VisibilityClause",
-    "PassportManifest",
-    "PassportLink",
-    "is_visible_to",
-    "downstream_of",
-    "RegistryItem",
-    "REGISTRY_ITEM_STATUSES",
+    "RECOVERABILITIES",
     "REGISTRY_ITEM_CLASSES",
-    "item_effective_at",
-    "TierAPack",
-    "tier_of",
-    "pack_size",
-    "fits_carrier",
-    "Finding",
+    "REGISTRY_ITEM_STATUSES",
+    "RELATIONSHIP_TYPES",
+    "RETROACTIVE_REASONS",
+    "REVOCATION_REASONS",
+    "SUITES",
+    "TRUST_MARKERS",
+    "TRUTH_MODES",
+    "VERIFICATION_READINGS",
+    "CapabilityProfile",
+    "ChildReference",
     "CoverageReport",
-    "coverage_ratio",
-    "Verdict",
-    "combine_outcome",
-    "outcome_for_freshness",
+    "EffectiveWindow",
+    "Finding",
     "Freshness",
-    "VerdictOutcome",
+    "InstallationBinding",
+    "ModelError",
+    "PassportLink",
+    "PassportManifest",
+    "ProductIdentifier",
+    "ProfileAxis",
+    "ProfileBinding",
+    "ProfileDefinition",
+    "ProfileResolution",
+    "RegistryItem",
+    "RegistryItemRef",
+    "RevocationRecord",
+    "SignatureFraming",
+    "TaintRecord",
+    "TierAPack",
     "TierId",
-    "validate_identifier",
-    "validate_manifest",
-    "validate_link",
-    "validate_event",
-    "validate_tier_a_pack",
+    "TriggerPredicate",
+    "TrustRequirements",
+    "TypeReference",
+    "Verdict",
+    "VerdictOutcome",
+    "VisibilityClause",
+    "combine_outcome",
+    "compare_durations",
+    "coverage_ratio",
+    "downstream_of",
+    "fits_carrier",
+    "freshness_satisfiable",
+    "identifier_equals",
+    "is_visible_to",
+    "item_effective_at",
+    "marker_at_least",
+    "outcome_for_freshness",
+    "pack_size",
+    "parse_duration",
+    "same_identity",
     "schemas",
+    "signature_voided",
+    "tier_of",
+    "validate_event",
+    "validate_identifier",
+    "validate_link",
+    "validate_manifest",
+    "validate_tier_a_pack",
 ]
 
 Duration = str
@@ -488,9 +489,7 @@ class EffectiveWindow:
         """Dated applicability of this binding at instant ``at``."""
         if at < self.from_:
             return False
-        if self.until is not None and at > self.until:
-            return False
-        return True
+        return not (self.until is not None and at > self.until)
 
     def to_dict(self) -> dict[str, Any]:
         d: dict[str, Any] = {"from": self.from_}
@@ -1575,33 +1574,33 @@ def _wire_manifest(m: Any) -> Any:
     return m.to_dict() if hasattr(m, "to_dict") else m
 
 
-def validate_identifier(instance: Any) -> "ValidationResult":  # noqa: F821
+def validate_identifier(instance: Any) -> ValidationResult:  # noqa: F821
     from .validate import validate
 
     return validate(instance, schemas["identifier"])
 
 
-def validate_manifest(instance: Any) -> "ValidationResult":  # noqa: F821
+def validate_manifest(instance: Any) -> ValidationResult:  # noqa: F821
     from .validate import validate
 
     return validate(_wire_manifest(instance), schemas["manifest"])
 
 
-def validate_link(instance: Any) -> "ValidationResult":  # noqa: F821
+def validate_link(instance: Any) -> ValidationResult:  # noqa: F821
     from .validate import validate
 
     wire = instance.to_dict() if hasattr(instance, "to_dict") else instance
     return validate(wire, schemas["link"])
 
 
-def validate_event(instance: Any) -> "ValidationResult":  # noqa: F821
+def validate_event(instance: Any) -> ValidationResult:  # noqa: F821
     from .validate import validate
 
     wire = instance.to_dict() if hasattr(instance, "to_dict") else instance
     return validate(wire, schemas["event"])
 
 
-def validate_tier_a_pack(instance: Any) -> "ValidationResult":  # noqa: F821
+def validate_tier_a_pack(instance: Any) -> ValidationResult:  # noqa: F821
     from .validate import validate
 
     wire = instance.to_dict() if hasattr(instance, "to_dict") else instance

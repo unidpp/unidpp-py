@@ -9,8 +9,6 @@ computed on build.
 
 from __future__ import annotations
 
-from typing import Any
-
 from ..canonical import commitment
 from ..eventlog import Actor, DomainEvent, append_event, log_head
 from ..model import (

@@ -12,13 +12,15 @@ passes). A real HMAC-SHA-256 slot ships for deterministic conformance runs
 from __future__ import annotations
 
 import hmac
+import math
 import re
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Mapping
+from typing import Any
 
-from .canonical import canonical_json, from_base64, sha256_hex, to_base64
+from .canonical import canonical_json, from_base64, to_base64
 from .model import (
     CoverageReport,
     Finding,
@@ -34,21 +36,21 @@ from .model import (
 )
 
 __all__ = [
-    "PublicKeyMaterial",
-    "SignatureInput",
     "CryptoSlot",
+    "CryptoSlots",
     "EcdsaNoneSlot",
     "HmacSha256Slot",
-    "CryptoSlots",
-    "default_slots",
+    "PublicKeyMaterial",
+    "SignatureInput",
     "SignerKey",
+    "assess_freshness",
+    "default_slots",
+    "duration_to_ms",
     "hmac_key",
+    "now_iso",
     "sign_framing",
     "signed_payload",
-    "assess_freshness",
-    "duration_to_ms",
     "verify_tier_a_pack",
-    "now_iso",
 ]
 
 
@@ -255,7 +257,7 @@ def assess_freshness(as_of: str, required: str | None, now: str) -> str:
         return "unknown"
     age_ms = (t_now - t_as_of) * 1000
     budget_ms = duration_to_ms(required)
-    if budget_ms != budget_ms:  # NaN
+    if math.isnan(budget_ms):
         return "unknown"
     return "fresh" if age_ms <= budget_ms else "stale"
 

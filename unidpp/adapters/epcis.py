@@ -28,15 +28,16 @@ ObjectEvent, bizStep          inspection.stamp (E14)
 from __future__ import annotations
 
 import uuid
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from ..eventlog import Actor, BalanceResult, DomainEvent, mass_balance
 from ..model import ModelError
 
 __all__ = [
     "UnsupportedEpcisEvent",
-    "map_epcis_event",
     "map_epcis_document",
+    "map_epcis_event",
     "transformation_balance",
 ]
 
@@ -50,7 +51,6 @@ _INSTALL_STEPS = ("assembling", "installing", "packing")
 
 
 def _event_time(evt: Mapping[str, Any]) -> str:
-    ts = evt.get("eventTimeZone", None)
     when = evt.get("eventTime") or evt.get("eventDateTime")
     if not when:
         raise UnsupportedEpcisEvent("EPCIS event carries no eventTime")

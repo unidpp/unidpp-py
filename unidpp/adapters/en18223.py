@@ -36,9 +36,10 @@ from __future__ import annotations
 import json
 import re
 import xml.etree.ElementTree as ET
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 from urllib.parse import urlparse
 
 from .. import model as M
@@ -47,17 +48,17 @@ from ..validate import validate
 from ..verify import now_iso
 
 __all__ = [
-    "ProfileFinding",
-    "FixtureResult",
-    "PROFILE_ADAPTATIONS",
     "NEW_FINDINGS_REGISTER",
+    "PROFILE_ADAPTATIONS",
+    "FixtureResult",
+    "ProfileFinding",
     "correct_typography",
-    "strip_json_comments",
     "parse_en18223_json",
     "project_xml",
     "promote_compressed",
-    "validate_profile_fixture",
     "run_eu_profile_suite",
+    "strip_json_comments",
+    "validate_profile_fixture",
     "write_eu_profile_reports",
 ]
 

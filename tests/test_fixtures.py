@@ -1,7 +1,6 @@
 """Fixture semantics: as-of applicability queries, dormant identifiers,
 capability classes, recall predicates, split/combine scenarios."""
 
-from unidpp import model as M
 from unidpp.eventlog import Actor, DomainEvent, append_event, verify_chain
 from unidpp.fixtures import build_car, build_laptop
 

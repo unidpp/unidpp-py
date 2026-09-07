@@ -20,25 +20,25 @@ from typing import Any
 
 from .canonical import commitment
 from .model import (
+    _ENUM_IN_PAYLOAD,
     EVENT_PAYLOAD_CONTRACTS,
     EVENT_TYPES,
     TRUST_MARKERS,
     ModelError,
-    _ENUM_IN_PAYLOAD,
     _require_member,
     _require_str,
 )
 
 __all__ = [
-    "AppendOnlyError",
     "Actor",
+    "AppendOnlyError",
+    "BalanceResult",
     "DomainEvent",
     "append_event",
-    "verify_chain",
-    "log_head",
     "blind_edge_commitment",
+    "log_head",
     "mass_balance",
-    "BalanceResult",
+    "verify_chain",
 ]
 
 

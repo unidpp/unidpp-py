@@ -229,7 +229,6 @@ class TestVerdictSemantics:
 
 class TestCarrierBudgets:
     def test_fits_carrier_unknown_raises(self):
-        laptop = build_laptop()
         with pytest.raises(M.ModelError):
             from unidpp.model import fits_carrier
 

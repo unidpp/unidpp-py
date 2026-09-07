@@ -1,6 +1,8 @@
 """Adapters: EPCIS event import (commissioning/aggregation/transformation)
 and UNTP passport stub parsing."""
 
+from typing import ClassVar
+
 import pytest
 
 from unidpp.adapters import map_epcis_event, parse_untp_stub, transformation_balance
@@ -155,7 +157,7 @@ class TestEpcisTransformation:
 
 
 class TestUntpStub:
-    STUB = {
+    STUB: ClassVar[dict] = {
         "@context": ["https://ref.gs1.org/gs1/v/model"],
         "type": "ProductPassport",
         "id": "https://example.com/passports/123",

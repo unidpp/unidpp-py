@@ -22,16 +22,16 @@ Supported stub shape (superset tolerated, missing fields raise):
 
 from __future__ import annotations
 
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from ..canonical import commitment
 from ..model import (
-    ChildReference,
+    EffectiveWindow,
     EventLogPointer,
     PassportManifest,
     ProductIdentifier,
     ProfileBinding,
-    EffectiveWindow,
 )
 
 __all__ = ["UntpStubError", "parse_untp_stub"]
@@ -90,8 +90,6 @@ def parse_untp_stub(stub: Mapping[str, Any], as_of: str) -> PassportManifest:
     issuer = stub.get("passportIssuer") or {}
     if not isinstance(issuer, Mapping):
         raise UntpStubError("passportIssuer must be an object")
-    operator = str(issuer.get("id") or issuer.get("name") or "urn:unidpp:actor:untp-import")
-
     profiles: list[ProfileBinding] = []
     for conf in stub.get("standardsConformance") or []:
         if not isinstance(conf, Mapping):
