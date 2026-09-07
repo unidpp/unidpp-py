@@ -57,6 +57,15 @@ from unidpp.adapters.en18223 import (
 DEFAULT_FIXTURES = REPO_ROOT / "conformance" / "competitors"
 DEFAULT_OUT = REPO_ROOT / "conformance" / "competitors"
 
+
+def _rel(path: Path) -> str:
+    """The artifact path as a repo-relative string (reports are
+    committed; absolute local paths never enter them)."""
+    try:
+        return str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
 EN18223_HEADER_KEYS = (
     "digitalProductPassportId",
     "uniqueProductIdentifier",
@@ -284,7 +293,7 @@ def _evaluate_artifact(entry: dict[str, Any]) -> dict[str, Any]:
             kind="competitor-artifact",
             clause="",
             title=path.name,
-            source=str(path),
+            source=_rel(path),
             outcome="fail",
             parsed=False,
         )
@@ -307,7 +316,7 @@ def _evaluate_artifact(entry: dict[str, Any]) -> dict[str, Any]:
             kind="competitor-artifact",
             clause="",
             title=path.name,
-            source=str(path),
+            source=_rel(path),
             outcome="not-applicable",
             parsed=True,
         )
@@ -348,9 +357,9 @@ def _evaluate_artifact(entry: dict[str, Any]) -> dict[str, Any]:
     fixture_entry = {
         "id": entry["name"].removesuffix(".json"),
         "kind": fmt["en18223Kind"],
-        "clause": entry.get("source_url", str(path)),
+        "clause": entry.get("source_url", _rel(path)),
         "title": entry.get("title", path.name),
-        "source": entry.get("source_label", str(path)),
+        "source": entry.get("source_label", _rel(path)),
         "lines": "1-end",
     }
     v = validate_profile_fixture(fixture_entry, raw, raw)
@@ -358,7 +367,7 @@ def _evaluate_artifact(entry: dict[str, Any]) -> dict[str, Any]:
     # Restore the vendor source URL (the runner rewrites it to the
     # ADOC_ROOT path it uses for the EU profile; this is correct for the
     # EU profile but wrong for competitor artifacts).
-    result["source"] = entry.get("source_label", str(path))
+    result["source"] = entry.get("source_label", _rel(path))
     return result
 
 

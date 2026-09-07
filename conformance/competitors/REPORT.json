@@ -2324,7 +2324,7 @@
           "kind": "competitor-artifact",
           "clause": "",
           "title": "battery-passport.json",
-          "source": "/Users/mulgogi/src/unidpp/unidpp-py/conformance/competitors/open-dpp/artifacts/battery-passport.json",
+          "source": "conformance/competitors/open-dpp/artifacts/battery-passport.json",
           "outcome": "not-applicable",
           "parsed": true,
           "adaptations": [

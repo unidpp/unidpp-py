@@ -1,6 +1,6 @@
 """DPP temporal profile: ISO 8601-1 conformance for every timestamp field.
 
-The `temporal` conformance check (TODO.impl/73, T-25). Pure functions over
+The `temporal` conformance check. Pure functions over
 data — no IO; the caller (the conformance runner or the EU-profile adapter)
 owns fixtures and reports.
 
@@ -20,8 +20,8 @@ Source of the profile rules (checked and documented):
   favour of the next day's 00:00:00 — one instant, one representation),
   and the 'T'/'Z' designators.
 - The calconnect/iso-8601-test-suite repository
-  (~/src/calconnect/iso-8601-test-suite) was checked for importable
-  validators per the task brief: it is a Ruby harness
+  (github.com/calconnect/iso-8601-test-suite) was checked for importable
+  validators: it is a Ruby harness
   (``lib/test_suite/*.rb``) driving language adapters over a
   newline-delimited JSON stdio protocol (``adapters/TEMPLATE.rb``);
   ``adapters/python/datetime.py`` is the adapter that puts the *CPython

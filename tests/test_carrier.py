@@ -157,6 +157,11 @@ class TestRunnerIntegration:
 
 
 class TestReportIntegration:
+    @pytest.mark.skipif(
+        not (EU_FIXTURES / "INDEX.json").exists(),
+        reason="EN 18223 example corpus not present "
+        "(licensed extraction, not distributed with the repository)",
+    )
     def test_eu_profile_report_carries_the_carrier_column(self):
         from unidpp.adapters.en18223 import run_eu_profile_suite
 

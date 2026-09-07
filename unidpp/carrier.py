@@ -1,6 +1,6 @@
-"""Carrier budget conformance: ISO/IEC 18004 QR capacity tables (T-26).
+"""Carrier budget conformance: ISO/IEC 18004 QR capacity tables.
 
-The `carrier` conformance check (TODO.impl/74). Pure functions over data —
+The `carrier` conformance check. Pure functions over data —
 no IO; the caller owns fixtures and reports.
 
 Provenance of the tables and the grammar (checked and ported verbatim):

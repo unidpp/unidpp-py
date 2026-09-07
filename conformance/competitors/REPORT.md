@@ -837,7 +837,7 @@ info-severity coverage-observation codes:
 
 #### battery-passport.json — **not-applicable**
 
-Source: `/Users/mulgogi/src/unidpp/unidpp-py/conformance/competitors/open-dpp/artifacts/battery-passport.json`
+Source: `conformance/competitors/open-dpp/artifacts/battery-passport.json`
 
 - `format-not-en-18223` (info, path `$`): artifact declares format 'open-dpp:json' version '4.0'; carries top-level keys ['createdAt', 'environment', 'format', 'id', 'lastStatusChange', 'presentationConfiguration', 'updatedAt', 'version']; overlap with the EN 18223 header keys is [] (none or one). Coverage observation only — the conformance runner is the EU-profile runner; this format is out of its machine-checkable surface.
 
