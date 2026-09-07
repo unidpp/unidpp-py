@@ -1,7 +1,7 @@
 """The mirrored UniDPP model: types + validation.
 
 Semantic mirror of ``@unidpp/model`` (packages/model/src of unidpp-ts),
-which itself implements ``isoiecjtc5/PLAN.md``:
+which itself implements ``the UniDPP design framework``:
 
 - L0 identity (I1, I3): one subject, one identity, never re-minted;
   identifiers are scheme-agnostic; **dormant** identifiers are first-class
@@ -155,7 +155,7 @@ class ProductIdentifier:
 
 @dataclass
 class TypeReference:
-    """Identity lattice (PLAN.md "type-configuration lattice")."""
+    """Identity lattice (the UniDPP design framework "type-configuration lattice")."""
 
     type_id: ProductIdentifier
     type_version: str
@@ -368,7 +368,7 @@ class TaintRecord:
 def signature_voided(rec: RevocationRecord, signed_at: str, reading: str) -> bool:
     """Is a signature made at ``signed_at`` void under this revocation record?
 
-    Three readings (PLAN.md distrust doctrine):
+    Three readings (the UniDPP design framework distrust doctrine):
     - cryptographic: ignores legal retroactivity entirely (never void here);
     - evidentiary: protects good-faith verifiers — only signatures a diligent
       verifier *should have known* were bad are void;

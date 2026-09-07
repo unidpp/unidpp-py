@@ -201,7 +201,7 @@ def mass_balance(
 ) -> BalanceResult:
     """Mass-balance conservation for split/combine transformations.
 
-    PLAN.md: quantities are new measured facts with provenance "computed by
+    the UniDPP design framework: quantities are new measured facts with provenance "computed by
     transformation event E" (mass balance in − out = loss, auditable),
     never copies. Only quantities sharing a unit participate; mismatched
     unit sets raise rather than silently balancing.

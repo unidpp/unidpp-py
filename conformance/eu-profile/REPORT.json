@@ -4,8 +4,8 @@
   "purpose": "Evidence annex for paper 4 (P3 deliverable)",
   "standard": "EN 18223:2026 Digital Product Passport — System interoperability (CEN/CLC/JTC 24, final text May 2026, corrected and reissued 2 June 2026)",
   "sources": {
-    "adocRoot": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en",
-    "auditRegister": "/Users/mulgogi/src/isoiecjtc5/AUDIT.md",
+    "adocRoot": "EN sources (local corpus)/en-18223-2026/sections-en",
+    "auditRegister": "the UniDPP defect register",
     "extraction": "payloads extracted verbatim from the internal Metanorma conversion (raw/); corrected/ copies fix PDF-typography artifacts only (curly quotes → straight; en/em dashes → hyphens inside quoted timestamps)",
     "handling": "source is an internal conversion of a purchased single-user SIST license (see document-en.adoc); same constraints apply to this report and its fixtures — never redistribute"
   },
@@ -131,7 +131,7 @@
       "kind": "json-compressed",
       "clause": "5.2.4",
       "title": "Serialization of the DigitalProductPassport class (DPP header)",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 68-83)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 68-83)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -184,7 +184,7 @@
       "kind": "json-compressed",
       "clause": "5.2.5",
       "title": "DataElementCollection with a combination of different simple and complex types",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 96-117)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 96-117)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -202,7 +202,7 @@
       "kind": "json-compressed",
       "clause": "5.2.6",
       "title": "standalone SingleValueDataElements",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 130-134)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 130-134)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -220,7 +220,7 @@
       "kind": "json-compressed",
       "clause": "5.2.6",
       "title": "SingleValueDataElements inside a complex data type",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 143-154)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 143-154)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -238,7 +238,7 @@
       "kind": "json-compressed",
       "clause": "5.2.7",
       "title": "Array of native types",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 166-175)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 166-175)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -256,7 +256,7 @@
       "kind": "json-compressed",
       "clause": "5.2.7",
       "title": "Array of Objects",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 182-196)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 182-196)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -274,7 +274,7 @@
       "kind": "json-compressed",
       "clause": "5.2.8",
       "title": "referencing the operating instruction of a product",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 207-214)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 207-214)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -292,7 +292,7 @@
       "kind": "json-compressed",
       "clause": "5.2.9",
       "title": "The productDescription provided in multiple languages",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 226-243)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/05-technical-interoperability.adoc (payload lines 226-243)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -310,7 +310,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 1",
       "title": "DataElementCollection as fully expanded JSON object",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 19-66)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 19-66)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -366,7 +366,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 2",
       "title": "DataElementCollection as fully expanded JSON object with different dictionary references",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 77-95)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 77-95)",
       "outcome": "fail",
       "parsed": false,
       "adaptations": [],
@@ -387,7 +387,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 3",
       "title": "SingleValuedDataElement as fully expanded JSON object",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 108-125)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 108-125)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -435,7 +435,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 4",
       "title": "MultiValuedDataElement as a fully expanded JSON object",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 138-170)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 138-170)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -523,7 +523,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 5",
       "title": "RelatedResource as a fully expanded JSON object",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 183-195)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 183-195)",
       "outcome": "fail",
       "parsed": false,
       "adaptations": [],
@@ -552,7 +552,7 @@
       "kind": "json-expanded",
       "clause": "Annex A, Example 6",
       "title": "MultiLanguageDataElement as a fully expanded JSON object",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 208-230)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/aa-annex-a.adoc (payload lines 208-230)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -576,7 +576,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 1",
       "title": "DigitalProductPassport serialized as XML",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 15-34)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 15-34)",
       "outcome": "fail",
       "parsed": true,
       "adaptations": [
@@ -630,7 +630,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 2",
       "title": "DataElementCollection serialized as XML",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 47-70)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 47-70)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -648,7 +648,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 3",
       "title": "Standalone SingleValuedDataElement as XML",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 83-89)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 83-89)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -666,7 +666,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 4",
       "title": "SingleValuedDataElement inside a complex data type as XML",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 98-111)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 98-111)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -684,7 +684,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 5",
       "title": "MultiValuedDataElement (Array of native types) as XML",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 124-133)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 124-133)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -702,7 +702,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 6",
       "title": "MultiValuedDataElement (Array of objects) as XML",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 146-156)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 146-156)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -720,7 +720,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 7",
       "title": "RelatedResource as XML",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 169-181)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 169-181)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [
@@ -738,7 +738,7 @@
       "kind": "xml",
       "clause": "Annex B, Example 8",
       "title": "MultiLanguageDataElement as XML",
-      "source": "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/sources/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 194-212)",
+      "source": "EN sources (local corpus)/en-18223-2026/sections-en/ab-annex-b.adoc (payload lines 194-212)",
       "outcome": "pass",
       "parsed": true,
       "adaptations": [

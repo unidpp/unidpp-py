@@ -9,7 +9,7 @@ validators can check.
 Every divergence between the EU compressed/expanded forms and the neutral
 core is handled here and documented as a PROFILE ADAPTATION (PA1…PA9 in
 ``PROFILE_ADAPTATIONS``), each cross-referenced to the AUDIT.md register
-(`/Users/mulgogi/src/isoiecjtc5/AUDIT.md`) where applicable.
+(`the UniDPP defect register`) where applicable.
 
 Validation layers applied to every fixture:
 
@@ -66,9 +66,9 @@ EN18223_CITATION = (
     "EN 18223:2026 Digital Product Passport — System interoperability "
     "(CEN/CLC/JTC 24, final text May 2026, corrected and reissued 2 June 2026)"
 )
-AUDIT_PATH = "/Users/mulgogi/src/isoiecjtc5/AUDIT.md"
+AUDIT_PATH = "the UniDPP defect register"
 ADOC_ROOT = (
-    "/Users/mulgogi/src/isoiecjtc5/references/internal-paid-standards/"
+    "references/internal-paid-standards/"
     "sources/en-18223-2026/sections-en"
 )
 

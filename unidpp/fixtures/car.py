@@ -1,4 +1,4 @@
-"""Car example (PLAN.md P4 pilot core), ported from
+"""Car example (the UniDPP design framework P4 pilot core), ported from
 ``unidpp-ts/packages/model/src/fixtures/car.ts``.
 
 Composite products are a federation of passports, not one mega-passport.

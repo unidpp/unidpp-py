@@ -2,7 +2,7 @@
 
 The positive corpus is the ported TS fixtures (laptop, car); the negative
 corpus is derived from the DPP corpus defect register
-(``isoiecjtc5/AUDIT.md`` items A1–A6) — real defects found in EN 18223's
+(``the UniDPP defect register`` items A1–A6) — real defects found in EN 18223's
 own examples. Every negative fixture MUST fail validation with a precise
 finding: the conformance suite proves it catches the corpus's real defects,
 not just a synthetic "invalid JSON" strawman.

@@ -1,4 +1,4 @@
-"""Laptop pilot fixture (PLAN.md stream 11 deliverable), ported from
+"""Laptop pilot fixture (the UniDPP design framework stream 11 deliverable), ported from
 ``unidpp-ts/packages/model/src/fixtures/laptop.ts``.
 
 A laptop with EU and JP jurisdiction profiles on ONE neutral core — no

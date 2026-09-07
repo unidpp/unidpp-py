@@ -1,3 +1,3 @@
 # unidpp-py
-UniDPP Python library (github.com/unidpp) — see ~/src/unidpp/TODO.impl/.
+UniDPP Python library (github.com/unidpp).
 License: MIT.

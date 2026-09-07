@@ -7,9 +7,9 @@ currently being supported with security updates:
 
 none yet since project not available before April 2026
 
-| Version | Supported          |
+| Version | Supported |
 | ------- | ------------------ |
-| 0.x     | :white_check_mark: |
+| 0.x | :white_check_mark: |
 
 ## Reporting a Vulnerability
 

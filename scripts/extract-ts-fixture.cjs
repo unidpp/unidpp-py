@@ -20,7 +20,7 @@ function resolveEsmBuild() {
   const candidates = [
     () => require.resolve("esbuild"),
     () => path.join(
-      process.env.HOME || "/Users/mulgogi",
+      process.env.HOME || require("os").homedir(),
       ".local/share/mise/installs/node/24.14.0/lib/node_modules/@glossarist/concept-browser/node_modules/esbuild",
     ),
   ];

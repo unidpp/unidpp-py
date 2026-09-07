@@ -1,16 +1,16 @@
 The project aims to support anyone implementing the mandatory Digital Product Passport Service according European Sustainability for Products Regulation 1781/2024
 Implementing shall be done according forthcoming CEN/CENELEC Standards 
 
-     EN 18219 DPP - Unique identifiers 
-     EN 18220 DPP - Data carriers 
-     EN 18239 DPP - access rights management, information system security, and business confidentiality (pending)
-     EN 18223 DPP - System interoperability EN 18216 DPP - Data exchange protocols 
-     EN 18221 DPP - data storage, archiving, and data persistence 
-     EN 18246 DPP – Data authentication, reliability and integrity   (pending)
-     EN 18222 DPP - Application Programming Interfaces (APIs) for the product passport lifecycle management and searchability 
+ EN 18219 DPP - Unique identifiers 
+ EN 18220 DPP - Data carriers 
+ EN 18239 DPP - access rights management, information system security, and business confidentiality (pending)
+ EN 18223 DPP - System interoperability EN 18216 DPP - Data exchange protocols 
+ EN 18221 DPP - data storage, archiving, and data persistence 
+ EN 18246 DPP – Data authentication, reliability and integrity (pending)
+ EN 18222 DPP - Application Programming Interfaces (APIs) for the product passport lifecycle management and searchability 
 
 - download standards here: 
-  https://standards.cencenelec.eu/ords/f?p=205:32:::::FSP_ORG_ID,FSP_LANG_ID:3342699,25&cs=1FC22FDE02FD51137ADC6BE8CA4E10E8F 
+ https://standards.cencenelec.eu/ords/f?p=205:32:::::FSP_ORG_ID,FSP_LANG_ID:3342699,25&cs=1FC22FDE02FD51137ADC6BE8CA4E10E8F 
 
 public test environment:
 -----
@@ -19,8 +19,8 @@ note: this is test data. technically correct response, but no official legitimat
 - Test one: https://drill.freedpp.eu/01/5012345101095
 - Test two: https://insulation.freedpp.eu/01/4003973287696
 
-    use browser for human readable HTML rendering
-    use e.g. POSTMAN with HTTP-Accept=application/json (or link in HTML beside Picture) for JSON response.
+ use browser for human readable HTML rendering
+ use e.g. POSTMAN with HTTP-Accept=application/json (or link in HTML beside Picture) for JSON response.
 
 
 Repositories:
