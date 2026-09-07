@@ -1,0 +1,2276 @@
+{
+  "generatedAt": "2026-09-07T08:32:36Z",
+  "suite": "unidpp-py competitor conformance — freeDPP and open-dpp published artifacts",
+  "purpose": "Factual register of findings produced by running every machine-checkable artifact published by freeDPP and open-dpp through the same EN 18223 conformance pipeline that produced conformance/eu-profile/REPORT.md. Companion to the EU profile report. Reproducible: see per-vendor fetch commands in the vendor sections.",
+  "runnerSemantics": "Findings are produced by `unidpp.adapters.en18223.validate_profile_fixture` exactly as used by the EU profile report — no runner semantics were altered for this exercise. Artifacts that are not EN 18223-shaped receive a single info-severity `format-not-en-18223` coverage observation and are skipped; they do not contribute error-severity findings. The runner reports PASS where it finds zero error-severity findings.",
+  "guardrails": [
+    "no runner-semantic changes — `validate_profile_fixture` runs unchanged",
+    "no manufactured findings — coverage observations only for out-of-scope formats",
+    "no FUD — PASSes are reported as PASSes alongside FAILs",
+    "no personality — neutral register; findings cite the artifact verbatim"
+  ],
+  "outcomeSemantics": "pass = zero error-severity findings (artifact is consistent with the EN 18223 normative text); fail = one or more error-severity findings; not-applicable = artifact is not EN 18223-shaped and is recorded as a coverage observation only.",
+  "totals": {
+    "fixtures": 7,
+    "passed": 0,
+    "failed": 6,
+    "notApplicable": 1,
+    "errorFindings": 245
+  },
+  "vendors": [
+    {
+      "vendor": "freedpp",
+      "meta": {
+        "vendor": "freeDPP (Otto Handle / CEN/CLC/JTC 24 WG 4 convenor)",
+        "repo": "https://github.com/OttoHandle/freeDPP",
+        "license": "GPL-3.0 (LICENSE in the overview repo, mirrored in sources/)",
+        "published_artifacts": "four published repos: the overview repo (github.com/OttoHandle/freeDPP, 4 markdown files) plus the implementation — freeDPPserver (C#/.NET 8 API serving both EN 18223 serializations), freeDPPdatabase (SQL Server schema CreateDb.sql, 2048 lines), freeDPPgui (management frontend). Two live test endpoints at https://drill.freedpp.eu and https://insulation.freedpp.eu serve the wire payloads this run exercises: the permalink route (/01/<GTIN>) and the EN 18222 API route (/v1/dppsByProductId/<GTIN>?representation=full|compressed).",
+        "fetch_command": "git clone --depth 1 https://github.com/OttoHandle/freeDPP.git conformance/competitors/freedpp/repo\ngit clone --depth 1 https://github.com/OttoHandle/freeDPPserver.git freeDPPserver\ngit clone --depth 1 https://github.com/OttoHandle/freeDPPdatabase.git freeDPPdatabase\ncurl -sH 'Accept: application/json' https://drill.freedpp.eu/01/5012345101095 -o conformance/competitors/freedpp/artifacts/drill-test1.json\ncurl -sH 'Accept: application/json' 'https://drill.freedpp.eu/v1/dppsByProductId/5012345101095?representation=full' -o conformance/competitors/freedpp/artifacts/drill-api-full.json\ncurl -sH 'Accept: application/json' 'https://drill.freedpp.eu/v1/dppsByProductId/5012345101095?representation=compressed' -o conformance/competitors/freedpp/artifacts/drill-api-compressed.json\ncurl -sH 'Accept: application/json' https://insulation.freedpp.eu/01/4003973287696 -o conformance/competitors/freedpp/artifacts/insulation-test2.json\ncurl -sH 'Accept: application/json' 'https://insulation.freedpp.eu/v1/dppsByProductId/4003973287696?representation=full' -o conformance/competitors/freedpp/artifacts/insulation-api-full.json\ncurl -sH 'Accept: application/json' 'https://insulation.freedpp.eu/v1/dppsByProductId/4003973287696?representation=compressed' -o conformance/competitors/freedpp/artifacts/insulation-api-compressed.json"
+      },
+      "totals": {
+        "fixtures": 6,
+        "passed": 0,
+        "failed": 6,
+        "notApplicable": 0,
+        "errorFindings": 245,
+        "findingsByAuditId": {
+          "A1": 6,
+          "A3": 170,
+          "A6": 6,
+          "C4": 6,
+          "N3": 10,
+          "N4": 42,
+          "N5": 2
+        },
+        "findingsByCode": {
+          "A1-granularity-casing": 6,
+          "A3-class-name-drift": 170,
+          "A6-schema-version-placeholder": 6,
+          "C4-content-spec-placeholder": 6,
+          "N3-duplicate-element-id": 10,
+          "N4-value-data-type-mismatch": 42,
+          "N5-multivalued-child-key-divergence": 2,
+          "profile-header-schema": 9
+        }
+      },
+      "results": [
+        {
+          "fixture": "drill-api-compressed",
+          "kind": "json-compressed",
+          "clause": "https://drill.freedpp.eu/v1/dppsByProductId/5012345101095?representation=compressed",
+          "title": "freeDPP EN 18222 API route, ?representation=compressed — drill, clause 5.2 compressed JSON",
+          "source": "GET https://drill.freedpp.eu/v1/dppsByProductId/5012345101095?representation=compressed — captured 2026-09-07",
+          "outcome": "fail",
+          "parsed": true,
+          "adaptations": [
+            "PA1",
+            "PA4",
+            "PA5",
+            "PA6",
+            "PA3",
+            "PA9"
+          ],
+          "errorFindings": 4,
+          "findings": [
+            {
+              "code": "A1-granularity-casing",
+              "severity": "error",
+              "message": "granularity 'Model' violates the normative lowercase enumeration ['model', 'batch', 'item'] (EN 18223 §4.1.2.2)",
+              "auditRef": "A1",
+              "citation": "",
+              "path": "$.granularity"
+            },
+            {
+              "code": "A6-schema-version-placeholder",
+              "severity": "error",
+              "message": "dppSchemaVersion '0.1' does not match the required grammar ^EN[0-9]{3,6}:v[0-9]+\\.[0-9]+(\\.[0-9]+)?$ (placeholders like 'ENXXX:v1.0' or draft self-references are not versions)",
+              "auditRef": "A6",
+              "citation": "",
+              "path": "$.dppSchemaVersion"
+            },
+            {
+              "code": "profile-header-schema",
+              "severity": "error",
+              "message": "$.lastUpdated: not a valid date-time: '2026-06-17T23:20:58.0000000' (Table 1, 4.1.2.1)",
+              "auditRef": null,
+              "citation": "",
+              "path": "$.lastUpdated"
+            },
+            {
+              "code": "profile-header-schema",
+              "severity": "error",
+              "message": "$.facilityId: shorter than 1 (Table 1, 4.1.2.1)",
+              "auditRef": null,
+              "citation": "",
+              "path": "$.facilityId"
+            },
+            {
+              "code": "C4-content-spec-placeholder",
+              "severity": "info",
+              "message": "contentSpecificationIds values are placeholders (['EN 01234-5:2027']); identifier space, allocator and validation undefined (AUDIT C4).",
+              "auditRef": "C4",
+              "citation": "[\"EN 01234-5:2027\"]",
+              "path": "$.contentSpecificationIds"
+            }
+          ]
+        },
+        {
+          "fixture": "drill-api-full",
+          "kind": "json-expanded",
+          "clause": "https://drill.freedpp.eu/v1/dppsByProductId/5012345101095?representation=full",
+          "title": "freeDPP EN 18222 API route, ?representation=full — drill, Annex-A expanded JSON",
+          "source": "GET https://drill.freedpp.eu/v1/dppsByProductId/5012345101095?representation=full — captured 2026-09-07",
+          "outcome": "fail",
+          "parsed": true,
+          "adaptations": [
+            "PA1",
+            "PA6",
+            "PA3",
+            "PA9"
+          ],
+          "errorFindings": 87,
+          "findings": [
+            {
+              "code": "A1-granularity-casing",
+              "severity": "error",
+              "message": "granularity 'Model' violates the normative lowercase enumeration ['model', 'batch', 'item'] (EN 18223 §4.1.2.2)",
+              "auditRef": "A1",
+              "citation": "",
+              "path": "$.granularity"
+            },
+            {
+              "code": "A6-schema-version-placeholder",
+              "severity": "error",
+              "message": "dppSchemaVersion '0.1' does not match the required grammar ^EN[0-9]{3,6}:v[0-9]+\\.[0-9]+(\\.[0-9]+)?$ (placeholders like 'ENXXX:v1.0' or draft self-references are not versions)",
+              "auditRef": "A6",
+              "citation": "",
+              "path": "$.dppSchemaVersion"
+            },
+            {
+              "code": "profile-header-schema",
+              "severity": "error",
+              "message": "$.lastUpdated: not a valid date-time: '2026-06-17T23:20:58' (Table 1, 4.1.2.1)",
+              "auditRef": null,
+              "citation": "",
+              "path": "$.lastUpdated"
+            },
+            {
+              "code": "profile-header-schema",
+              "severity": "error",
+              "message": "$.facilityId: shorter than 1 (Table 1, 4.1.2.1)",
+              "auditRef": null,
+              "citation": "",
+              "path": "$.facilityId"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_SafetyInstructions' is used by two siblings (elements[20] and elements[21]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_SafetyInstructions\"",
+              "path": "$.elements[0].elements[21].elementId"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[2].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '20'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"20\"",
+              "path": "$.elements[0].elements[2].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[5].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:integer' with value serialized as a JSON string '1000'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"1000\"",
+              "path": "$.elements[0].elements[5].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[6].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[7].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[8].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:integer' with value serialized as a JSON string '6'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"6\"",
+              "path": "$.elements[0].elements[8].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[9].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[10].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[11].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[12].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[13].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '1.8'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"1.8\"",
+              "path": "$.elements[0].elements[13].value"
+            },
+            {
+              "code": "N5-multivalued-child-key-divergence",
+              "severity": "error",
+              "message": "MultiValuedDataElement children serialized under 'value'; Annex A Example 1 serializes the same class's children under 'elements'; Table 4 (4.1.2.6) models them as '[DataElement]' entries (finding N5).",
+              "auditRef": "N5",
+              "citation": "\"value\": [ { \"elementId\": \"efficiencyRating1\", … } ]",
+              "path": "$.elements[0].elements[14].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[14].value[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[14].value[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[15].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '2'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"2\"",
+              "path": "$.elements[0].elements[15].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[16].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[17].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[18].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[19].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '10'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"10\"",
+              "path": "$.elements[0].elements[19].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[20].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[21].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[22].objectType"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_AddressLine2PostalCodeCity' is used by two siblings (elements[0] and elements[1]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_AddressLine2PostalCodeCity\"",
+              "path": "$.elements[1].elements[1].elementId"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[5].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[6].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[7].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[8].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[2].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[2].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[3].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[3].elements[1].objectType"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_RecyclingInstructions' is used by two siblings (elements[0] and elements[1]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_RecyclingInstructions\"",
+              "path": "$.elements[4].elements[1].elementId"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_MaterialComposition' is used by two siblings (elements[2] and elements[3]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_MaterialComposition\"",
+              "path": "$.elements[4].elements[3].elementId"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_HazardousSubstancesConcentrationLocation' is used by two siblings (elements[4] and elements[5]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_HazardousSubstancesConcentrationLocation\"",
+              "path": "$.elements[4].elements[5].elementId"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[5].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[0].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '100'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"100\"",
+              "path": "$.elements[5].elements[0].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[2].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '100'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"100\"",
+              "path": "$.elements[5].elements[2].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[4].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '12'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"12\"",
+              "path": "$.elements[5].elements[4].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[5].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '60'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"60\"",
+              "path": "$.elements[5].elements[5].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[6].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '100'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"100\"",
+              "path": "$.elements[5].elements[6].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[7].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '230'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"230\"",
+              "path": "$.elements[5].elements[7].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[8].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '30'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"30\"",
+              "path": "$.elements[5].elements[8].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[6].elements[0].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '66'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"66\"",
+              "path": "$.elements[6].elements[0].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[6].elements[1].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '34'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"34\"",
+              "path": "$.elements[6].elements[1].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[6].elements[2].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '1'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"1\"",
+              "path": "$.elements[6].elements[2].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[6].elements[3].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '12016'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"12016\"",
+              "path": "$.elements[6].elements[3].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[7].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[7].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[7].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[8].elements[0].objectType"
+            },
+            {
+              "code": "C4-content-spec-placeholder",
+              "severity": "info",
+              "message": "contentSpecificationIds values are placeholders (['EN 01234-5:2027']); identifier space, allocator and validation undefined (AUDIT C4).",
+              "auditRef": "C4",
+              "citation": "[\"EN 01234-5:2027\"]",
+              "path": "$.contentSpecificationIds"
+            }
+          ]
+        },
+        {
+          "fixture": "drill-test1",
+          "kind": "json-expanded",
+          "clause": "https://drill.freedpp.eu/01/5012345101095",
+          "title": "freeDPP permalink route — cordless drill (GTIN 5012345101095), Annex-A expanded JSON",
+          "source": "GET https://drill.freedpp.eu/01/5012345101095 (Accept: application/json) — captured 2026-09-07",
+          "outcome": "fail",
+          "parsed": true,
+          "adaptations": [
+            "PA1",
+            "PA6",
+            "PA3",
+            "PA9"
+          ],
+          "errorFindings": 87,
+          "findings": [
+            {
+              "code": "A1-granularity-casing",
+              "severity": "error",
+              "message": "granularity 'Model' violates the normative lowercase enumeration ['model', 'batch', 'item'] (EN 18223 §4.1.2.2)",
+              "auditRef": "A1",
+              "citation": "",
+              "path": "$.granularity"
+            },
+            {
+              "code": "A6-schema-version-placeholder",
+              "severity": "error",
+              "message": "dppSchemaVersion '0.1' does not match the required grammar ^EN[0-9]{3,6}:v[0-9]+\\.[0-9]+(\\.[0-9]+)?$ (placeholders like 'ENXXX:v1.0' or draft self-references are not versions)",
+              "auditRef": "A6",
+              "citation": "",
+              "path": "$.dppSchemaVersion"
+            },
+            {
+              "code": "profile-header-schema",
+              "severity": "error",
+              "message": "$.lastUpdated: not a valid date-time: '2026-06-17T23:20:58' (Table 1, 4.1.2.1)",
+              "auditRef": null,
+              "citation": "",
+              "path": "$.lastUpdated"
+            },
+            {
+              "code": "profile-header-schema",
+              "severity": "error",
+              "message": "$.facilityId: shorter than 1 (Table 1, 4.1.2.1)",
+              "auditRef": null,
+              "citation": "",
+              "path": "$.facilityId"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_SafetyInstructions' is used by two siblings (elements[20] and elements[21]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_SafetyInstructions\"",
+              "path": "$.elements[0].elements[21].elementId"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[2].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '20'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"20\"",
+              "path": "$.elements[0].elements[2].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[5].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:integer' with value serialized as a JSON string '1000'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"1000\"",
+              "path": "$.elements[0].elements[5].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[6].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[7].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[8].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:integer' with value serialized as a JSON string '6'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"6\"",
+              "path": "$.elements[0].elements[8].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[9].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[10].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[11].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[12].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[13].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '1.8'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"1.8\"",
+              "path": "$.elements[0].elements[13].value"
+            },
+            {
+              "code": "N5-multivalued-child-key-divergence",
+              "severity": "error",
+              "message": "MultiValuedDataElement children serialized under 'value'; Annex A Example 1 serializes the same class's children under 'elements'; Table 4 (4.1.2.6) models them as '[DataElement]' entries (finding N5).",
+              "auditRef": "N5",
+              "citation": "\"value\": [ { \"elementId\": \"efficiencyRating1\", … } ]",
+              "path": "$.elements[0].elements[14].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[14].value[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[14].value[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[15].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '2'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"2\"",
+              "path": "$.elements[0].elements[15].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[16].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[17].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[18].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[19].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '10'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"10\"",
+              "path": "$.elements[0].elements[19].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[20].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[21].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[22].objectType"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_AddressLine2PostalCodeCity' is used by two siblings (elements[0] and elements[1]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_AddressLine2PostalCodeCity\"",
+              "path": "$.elements[1].elements[1].elementId"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[5].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[6].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[7].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[8].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[2].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[2].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[3].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[3].elements[1].objectType"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_RecyclingInstructions' is used by two siblings (elements[0] and elements[1]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_RecyclingInstructions\"",
+              "path": "$.elements[4].elements[1].elementId"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_MaterialComposition' is used by two siblings (elements[2] and elements[3]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_MaterialComposition\"",
+              "path": "$.elements[4].elements[3].elementId"
+            },
+            {
+              "code": "N3-duplicate-element-id",
+              "severity": "error",
+              "message": "elementId '_p_d_HazardousSubstancesConcentrationLocation' is used by two siblings (elements[4] and elements[5]); Table 2 (4.1.2.3): 'The relative identifier of the DataElement shall be unique within its location (i.e. in the DataElementCollection or MultiValuedDataElement)' (finding N3).",
+              "auditRef": "N3",
+              "citation": "\"elementId\": \"_p_d_HazardousSubstancesConcentrationLocation\"",
+              "path": "$.elements[4].elements[5].elementId"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[5].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[0].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '100'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"100\"",
+              "path": "$.elements[5].elements[0].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[2].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '100'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"100\"",
+              "path": "$.elements[5].elements[2].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[4].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '12'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"12\"",
+              "path": "$.elements[5].elements[4].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[5].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '60'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"60\"",
+              "path": "$.elements[5].elements[5].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[6].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '100'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"100\"",
+              "path": "$.elements[5].elements[6].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[7].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '230'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"230\"",
+              "path": "$.elements[5].elements[7].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[8].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '30'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"30\"",
+              "path": "$.elements[5].elements[8].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[6].elements[0].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '66'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"66\"",
+              "path": "$.elements[6].elements[0].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[6].elements[1].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '34'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"34\"",
+              "path": "$.elements[6].elements[1].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[6].elements[2].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '1'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"1\"",
+              "path": "$.elements[6].elements[2].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[6].elements[3].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:decimal' with value serialized as a JSON string '12016'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"12016\"",
+              "path": "$.elements[6].elements[3].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[7].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[7].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[7].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[8].elements[0].objectType"
+            },
+            {
+              "code": "C4-content-spec-placeholder",
+              "severity": "info",
+              "message": "contentSpecificationIds values are placeholders (['EN 01234-5:2027']); identifier space, allocator and validation undefined (AUDIT C4).",
+              "auditRef": "C4",
+              "citation": "[\"EN 01234-5:2027\"]",
+              "path": "$.contentSpecificationIds"
+            }
+          ]
+        },
+        {
+          "fixture": "insulation-api-compressed",
+          "kind": "json-compressed",
+          "clause": "https://insulation.freedpp.eu/v1/dppsByProductId/4003973287696?representation=compressed",
+          "title": "freeDPP EN 18222 API route, ?representation=compressed — insulation, clause 5.2 compressed JSON",
+          "source": "GET https://insulation.freedpp.eu/v1/dppsByProductId/4003973287696?representation=compressed — captured 2026-09-07",
+          "outcome": "fail",
+          "parsed": true,
+          "adaptations": [
+            "PA1",
+            "PA4",
+            "PA5",
+            "PA6",
+            "PA3",
+            "PA9"
+          ],
+          "errorFindings": 3,
+          "findings": [
+            {
+              "code": "A1-granularity-casing",
+              "severity": "error",
+              "message": "granularity 'Model' violates the normative lowercase enumeration ['model', 'batch', 'item'] (EN 18223 §4.1.2.2)",
+              "auditRef": "A1",
+              "citation": "",
+              "path": "$.granularity"
+            },
+            {
+              "code": "A6-schema-version-placeholder",
+              "severity": "error",
+              "message": "dppSchemaVersion '0.1' does not match the required grammar ^EN[0-9]{3,6}:v[0-9]+\\.[0-9]+(\\.[0-9]+)?$ (placeholders like 'ENXXX:v1.0' or draft self-references are not versions)",
+              "auditRef": "A6",
+              "citation": "",
+              "path": "$.dppSchemaVersion"
+            },
+            {
+              "code": "profile-header-schema",
+              "severity": "error",
+              "message": "$.lastUpdated: not a valid date-time: '2026-04-01T16:07:24.0000000' (Table 1, 4.1.2.1)",
+              "auditRef": null,
+              "citation": "",
+              "path": "$.lastUpdated"
+            },
+            {
+              "code": "C4-content-spec-placeholder",
+              "severity": "info",
+              "message": "contentSpecificationIds values are placeholders (['EN 13162:2012+A1:2015']); identifier space, allocator and validation undefined (AUDIT C4).",
+              "auditRef": "C4",
+              "citation": "[\"EN 13162:2012+A1:2015\"]",
+              "path": "$.contentSpecificationIds"
+            }
+          ]
+        },
+        {
+          "fixture": "insulation-api-full",
+          "kind": "json-expanded",
+          "clause": "https://insulation.freedpp.eu/v1/dppsByProductId/4003973287696?representation=full",
+          "title": "freeDPP EN 18222 API route, ?representation=full — insulation, Annex-A expanded JSON",
+          "source": "GET https://insulation.freedpp.eu/v1/dppsByProductId/4003973287696?representation=full — captured 2026-09-07",
+          "outcome": "fail",
+          "parsed": true,
+          "adaptations": [
+            "PA1",
+            "PA6",
+            "PA3",
+            "PA9"
+          ],
+          "errorFindings": 32,
+          "findings": [
+            {
+              "code": "A1-granularity-casing",
+              "severity": "error",
+              "message": "granularity 'Model' violates the normative lowercase enumeration ['model', 'batch', 'item'] (EN 18223 §4.1.2.2)",
+              "auditRef": "A1",
+              "citation": "",
+              "path": "$.granularity"
+            },
+            {
+              "code": "A6-schema-version-placeholder",
+              "severity": "error",
+              "message": "dppSchemaVersion '0.1' does not match the required grammar ^EN[0-9]{3,6}:v[0-9]+\\.[0-9]+(\\.[0-9]+)?$ (placeholders like 'ENXXX:v1.0' or draft self-references are not versions)",
+              "auditRef": "A6",
+              "citation": "",
+              "path": "$.dppSchemaVersion"
+            },
+            {
+              "code": "profile-header-schema",
+              "severity": "error",
+              "message": "$.lastUpdated: not a valid date-time: '2026-04-01T16:07:24' (Table 1, 4.1.2.1)",
+              "auditRef": null,
+              "citation": "",
+              "path": "$.lastUpdated"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[2].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[3].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[3].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[0].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:float' with value serialized as a JSON string '0,0011'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"0,0011\"",
+              "path": "$.elements[4].elements[0].elements[0].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[1].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:float' with value serialized as a JSON string '0.000012'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"0.000012\"",
+              "path": "$.elements[4].elements[0].elements[1].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[2].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:float' with value serialized as a JSON string '1.01'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"1.01\"",
+              "path": "$.elements[4].elements[0].elements[2].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[3].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:float' with value serialized as a JSON string '0,0022'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"0,0022\"",
+              "path": "$.elements[4].elements[0].elements[3].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[0].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[0].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[0].elements[2].objectType"
+            },
+            {
+              "code": "C4-content-spec-placeholder",
+              "severity": "info",
+              "message": "contentSpecificationIds values are placeholders (['EN 13162:2012+A1:2015']); identifier space, allocator and validation undefined (AUDIT C4).",
+              "auditRef": "C4",
+              "citation": "[\"EN 13162:2012+A1:2015\"]",
+              "path": "$.contentSpecificationIds"
+            }
+          ]
+        },
+        {
+          "fixture": "insulation-test2",
+          "kind": "json-expanded",
+          "clause": "https://insulation.freedpp.eu/01/4003973287696",
+          "title": "freeDPP permalink route — insulation (GTIN 4003973287696), Annex-A expanded JSON",
+          "source": "GET https://insulation.freedpp.eu/01/4003973287696 (Accept: application/json) — captured 2026-09-07",
+          "outcome": "fail",
+          "parsed": true,
+          "adaptations": [
+            "PA1",
+            "PA6",
+            "PA3",
+            "PA9"
+          ],
+          "errorFindings": 32,
+          "findings": [
+            {
+              "code": "A1-granularity-casing",
+              "severity": "error",
+              "message": "granularity 'Model' violates the normative lowercase enumeration ['model', 'batch', 'item'] (EN 18223 §4.1.2.2)",
+              "auditRef": "A1",
+              "citation": "",
+              "path": "$.granularity"
+            },
+            {
+              "code": "A6-schema-version-placeholder",
+              "severity": "error",
+              "message": "dppSchemaVersion '0.1' does not match the required grammar ^EN[0-9]{3,6}:v[0-9]+\\.[0-9]+(\\.[0-9]+)?$ (placeholders like 'ENXXX:v1.0' or draft self-references are not versions)",
+              "auditRef": "A6",
+              "citation": "",
+              "path": "$.dppSchemaVersion"
+            },
+            {
+              "code": "profile-header-schema",
+              "severity": "error",
+              "message": "$.lastUpdated: not a valid date-time: '2026-04-01T16:07:24' (Table 1, 4.1.2.1)",
+              "auditRef": null,
+              "citation": "",
+              "path": "$.lastUpdated"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[0].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[1].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[2].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[3].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[3].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[0].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:float' with value serialized as a JSON string '0,0011'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"0,0011\"",
+              "path": "$.elements[4].elements[0].elements[0].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[1].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:float' with value serialized as a JSON string '0.000012'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"0.000012\"",
+              "path": "$.elements[4].elements[0].elements[1].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[2].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:float' with value serialized as a JSON string '1.01'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"1.01\"",
+              "path": "$.elements[4].elements[0].elements[2].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[3].objectType"
+            },
+            {
+              "code": "N4-value-data-type-mismatch",
+              "severity": "error",
+              "message": "valueDataType 'xsd:float' with value serialized as a JSON string '0,0022'; Table 7 (5.2.3) maps xsd:float to 'A JSON Number'; the compressed form of the same data (5.2.5) prints JSON numbers (finding N4).",
+              "auditRef": "N4",
+              "citation": "\"value\": \"0,0022\"",
+              "path": "$.elements[4].elements[0].elements[3].value"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[0].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[2].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[3].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[4].elements[4].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[0].elements[0].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[0].elements[1].objectType"
+            },
+            {
+              "code": "A3-class-name-drift",
+              "severity": "error",
+              "message": "objectType 'SingleValuedDataElement' is the table/example spelling; the 4.1.2.1 prose spelling is 'SingleValueDataElement' (AUDIT A3, marked verify). EN 18223 5.2.6: '*SingleValuedDataElements* (4.1.2.5) are serialized as JSON «key-value pair». In case the *SingleValueDataElements* is contained in *MultiValueDataElement*, the key-value pair may be simplified to a value of a native data type.' — both spellings in one sentence; 4.1.2.1 prose prints 'SingleValueDataElement'.",
+              "auditRef": "A3",
+              "citation": "\"objectType\": \"SingleValuedDataElement\"",
+              "path": "$.elements[5].elements[0].elements[2].objectType"
+            },
+            {
+              "code": "C4-content-spec-placeholder",
+              "severity": "info",
+              "message": "contentSpecificationIds values are placeholders (['EN 13162:2012+A1:2015']); identifier space, allocator and validation undefined (AUDIT C4).",
+              "auditRef": "C4",
+              "citation": "[\"EN 13162:2012+A1:2015\"]",
+              "path": "$.contentSpecificationIds"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "vendor": "open-dpp",
+      "meta": {
+        "vendor": "open-dpp (open-source DPP platform; github.com/open-dpp)",
+        "repo": "https://github.com/open-dpp/open-dpp",
+        "license": "AGPL-3.0 (LICENSE in the repo, mirrored in sources/)",
+        "published_artifacts": "source tree (pnpm monorepo). The only example document in machine-checkable form is the e2e battery-passport fixture (`apps/e2e/tests/api/battery-passport.ts`), exporting a `Battery_Passport` object literal in `open-dpp:json` v4.0 format — AAS-based (environment.assetAdministrationShells / submodels / conceptDescriptions), NOT EN 18223.",
+        "fetch_command": "git clone --depth 1 https://github.com/open-dpp/open-dpp.git conformance/competitors/open-dpp/repo\n# extract Battery_Passport with esbuild (transpile TS) + node (execute):\nnode scripts/extract-ts-fixture.cjs apps/e2e/tests/api/battery-passport.ts Battery_Passport conformance/competitors/open-dpp/artifacts/battery-passport.json"
+      },
+      "totals": {
+        "fixtures": 1,
+        "passed": 0,
+        "failed": 0,
+        "notApplicable": 1,
+        "errorFindings": 0,
+        "findingsByAuditId": {},
+        "findingsByCode": {
+          "format-not-en-18223": 1
+        }
+      },
+      "results": [
+        {
+          "fixture": "battery-passport.json",
+          "kind": "competitor-artifact",
+          "clause": "",
+          "title": "battery-passport.json",
+          "source": "/Users/mulgogi/src/unidpp/unidpp-py/conformance/competitors/open-dpp/artifacts/battery-passport.json",
+          "outcome": "not-applicable",
+          "parsed": true,
+          "adaptations": [
+            "coverage-observation"
+          ],
+          "errorFindings": 0,
+          "findings": [
+            {
+              "code": "format-not-en-18223",
+              "severity": "info",
+              "message": "artifact declares format 'open-dpp:json' version '4.0'; carries top-level keys ['createdAt', 'environment', 'format', 'id', 'lastStatusChange', 'presentationConfiguration', 'updatedAt', 'version']; overlap with the EN 18223 header keys is [] (none or one). Coverage observation only — the conformance runner is the EU-profile runner; this format is out of its machine-checkable surface.",
+              "auditRef": null,
+              "citation": "EN 18223 Table 1 (4.1.2.1) header keys: digitalProductPassportId, uniqueProductIdentifier, granularity, dppSchemaVersion, dppStatus, lastUpdated, economicOperatorId, facilityId, contentSpecificationIds.",
+              "path": "$"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "freedppSourceEvidence": [
+    {
+      "id": "S1",
+      "file": "freeDPPserver/FreeDppDppFull.cs:21",
+      "citation": "            public string granularity { get; set; } = \"Model\"; //batch, item",
+      "note": "default granularity is the capitalized spelling — the origin of the A1-granularity-casing findings on every wire artifact"
+    },
+    {
+      "id": "S2",
+      "file": "freeDPPserver/FreeDppDppFull.cs:22",
+      "citation": "            public string dppSchemaVersion { get; set; } = \"0.1\";",
+      "note": "default dppSchemaVersion does not carry the ENnnn:vX.Y form — the origin of the A6-schema-version-placeholder findings"
+    },
+    {
+      "id": "S3",
+      "file": "freeDPPserver/FreeDppDppFull.cs:23",
+      "citation": "            public string dppStatus { get; set; } = \"Active\";",
+      "note": "default dppStatus is the capitalized spelling; the live payloads override it with the lowercase 'active' the EN's examples use"
+    },
+    {
+      "id": "S4",
+      "file": "freeDPPserver/FreeDppDppFull.cs:24",
+      "citation": "            public DateTime lastUpdated { get; set; } = DateTime.Now;",
+      "note": "lastUpdated defaults to server-local time (no timezone designator) — the origin of the not-a-valid-date-time findings"
+    },
+    {
+      "id": "S5",
+      "file": "freeDPPserver/FreeDppDppFull.cs:28",
+      "citation": "            public string hashMD5 { get; set; } // not yet, to be handled when EN 18239 published; but must not be deleted because JS code needs it",
+      "note": "the hash slot is explicitly deferred: integrity is 'to be handled when EN 18239 published' — the trust surface is pending by the vendor's own statement (also FUNCTIONALITY.md: 'security frameworks according EN 18239 and EN 18246 to be delivered after publication of these standards')"
+    },
+    {
+      "id": "S6",
+      "file": "freeDPPserver/FreeDppDppFull.cs:71",
+      "citation": "            public string objectType { get; set; } = \"SingleValuedDataElement\";// laut annex 1 ",
+      "note": "the class name follows the EN's Annex A spelling 'SingleValuedDataElement' — the origin of the A3-class-name-drift findings; the comment cites the standard's annex as its source"
+    },
+    {
+      "id": "S7",
+      "file": "freeDPPserver/DppValidateController.cs:6",
+      "citation": "//oh260810 - not yet comletely implemented - just a test controller for dpp validation",
+      "note": "the server's own DPP validation endpoint is a test controller, 'not yet comletely implemented - just a test controller for dpp validation'"
+    },
+    {
+      "id": "S8",
+      "file": "freeDPPserver/DppValidateController.cs:18",
+      "citation": "    private readonly string _schemaPfad = Path.Combine(\"Schemas\", \"dpp-schema.json\");",
+      "note": "the validator references Schemas/dpp-schema.json; no Schemas directory exists anywhere in the published freeDPPserver repo (working tree or PublishedVersion260813.zip)"
+    }
+  ]
+}
