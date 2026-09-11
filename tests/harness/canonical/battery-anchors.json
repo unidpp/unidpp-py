@@ -1,0 +1,26 @@
+{
+  "cn-attestation-service": {
+    "public_hex": "0b51985902644ca6b7a1d9b9709f3a82fe158d2b04f4f6a89383f888da9735ca",
+    "suite": "ed25519"
+  },
+  "cn-quorum-a": {
+    "public_hex": "f1c65adfe88ffab7c61bc524f669af34143b5057b356d88dca121935bb8d080c",
+    "suite": "ed25519"
+  },
+  "cn-quorum-b": {
+    "public_hex": "a3e551c43a20232843cdb759e89af8ad2f1543ccc2f0dfbb9f35b72f05391799",
+    "suite": "ed25519"
+  },
+  "cn-samr": {
+    "public_hex": "ea5c6ed9a8b23b0a300681226e7a8dea868d0fd028ccdf40f294e01645340057",
+    "suite": "ed25519"
+  },
+  "de-zoll": {
+    "public_hex": "767a34ac6ae1496a9ab9f9c8697dacfea123a5271d09458fa57c53daa9661119",
+    "suite": "ed25519"
+  },
+  "weilian-shenzhen": {
+    "public_hex": "de3bad0e72469ccf9aea84db79546ea4625022e3f4c6fa690b5b4fb61debe4df",
+    "suite": "ed25519"
+  }
+}

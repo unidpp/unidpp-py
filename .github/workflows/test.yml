@@ -8,9 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check out the reference core (golden vectors for the foreign harness)
+        uses: actions/checkout@v4
+        with:
+          repository: unidpp/unidpp-core
+          path: unidpp-core
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - run: pip install -e ".[dev]"
       - run: pytest
+        env:
+          UNIDPP_CORE: ${{ github.workspace }}/unidpp-core
 
