@@ -19,10 +19,31 @@ fixtures/canonical/verification-route.json``.
 
 from __future__ import annotations
 
+import hashlib
+
 from .ed25519 import verify as ed25519_verify
 from .framing import canonical_fields, domain_frame, le_u64
 
+from . import vectors
+
 DECLARATION_DOMAIN = b"UNIDPP-SIGNATIF/INTEROP-DECLARATION"
+S13_MESSAGE_DOMAIN = b"UNIDPP-SIGNATIF/S13-MESSAGE"
+
+# The reveal-class to outcome mapping (the S13 clause's core rule):
+# a verifier in the policy's verifier set is answered per the
+# segment's reveal class; anything else is a stated denial.
+REVEAL_OUTCOMES = {
+    "Open": ("permit", lambda policy, req: []),
+    "PairingGated": ("permit-paired", lambda policy, req: [req["verifier"]]),
+    "OriginSealed": (
+        "attestation-offer",
+        lambda policy, req: [f"{policy['authority']}-attestation"],
+    ),
+    "Escrowed": (
+        "escalation",
+        lambda policy, req: [f"{policy['authority']}-escrow"],
+    ),
+}
 
 # The harmonization ladder (SI-5): the wire token is the kebab-case
 # level name; the canonical form carries the ordinal.
@@ -99,3 +120,99 @@ def route_replay(route: dict) -> list[dict]:
             # with the reason riding the route.
             continue
     return entries
+
+def _verify_slot(slot: dict, domain: bytes, payload: bytes, public: bytes, what: str) -> None:
+    if slot.get("suite") != "ed25519":
+        raise ProtocolFailure(
+            f"unsupported {what} suite `{slot.get('suite')}` "
+            "(the foreign subset reads ed25519)"
+        )
+    if not ed25519_verify(public, domain_frame(domain, payload), bytes(slot["signature"])):
+        raise ProtocolFailure(f"the {what}'s signature does not verify")
+
+
+def evaluate_s13(request: dict, policy: dict, custodian: str) -> dict:
+    """The S13 policy evaluation, ported from the clause: the
+    outcome derives from the governing policy (verifier membership,
+    then the reveal class), the response cites the policy's id and
+    version, and the request's digest binds the answer to its
+    question."""
+    allowed = (
+        request["verifier"] in policy["verifiers"]
+        or "any-verifier" in policy["verifiers"]
+    )
+    if not allowed:
+        outcome = {
+            "outcome": "deny",
+            "reason": (
+                f"verifier `{request['verifier']}` is not in policy "
+                f"`{policy['policy_id']}`'s verifier set"
+            ),
+        }
+    else:
+        token, payload_of = REVEAL_OUTCOMES[policy["reveal"]]
+        fields = payload_of(policy, request)
+        outcome = {"outcome": token}
+        if fields:
+            key = {
+                "permit-paired": "paired_with",
+                "attestation-offer": "attestation_service",
+                "escalation": "escrow_quorum",
+            }[token]
+            outcome[key] = fields[0]
+    return {
+        "request_digest": list(
+            hashlib.sha256(vectors.request_canonical(request)).digest()
+        ),
+        "outcome": outcome,
+        "governing_policy": policy["policy_id"],
+        "governing_policy_version": policy["version"],
+        "custodian": custodian,
+    }
+
+
+def verify_s13_request(signed_request: dict, requester_public: bytes) -> None:
+    """Verify the verifier's signed request in the S13-MESSAGE
+    domain (the graph reading — whose key this is — stays the
+    suite's)."""
+    _verify_slot(
+        signed_request["signature"],
+        S13_MESSAGE_DOMAIN,
+        vectors.request_canonical(signed_request["request"]),
+        requester_public,
+        "S13 request",
+    )
+
+
+def verify_s13_response(signed_response: dict, responder_public: bytes) -> None:
+    """Verify the custodian's signed response in the S13-MESSAGE
+    domain."""
+    _verify_slot(
+        signed_response["signature"],
+        S13_MESSAGE_DOMAIN,
+        vectors.response_canonical(signed_response["response"]),
+        responder_public,
+        "S13 response",
+    )
+
+
+def sign_s13_request(request: dict, seed: bytes) -> dict:
+    """Issue a verifier-signed request as a foreign implementation:
+    RFC 8032 Ed25519 over the S13-MESSAGE domain framing of the
+    request's canonical bytes. Deterministic — the same seed and
+    request reproduce the same signature, which is what makes the
+    reference verifier accept it."""
+    from .ed25519 import sign as ed25519_sign
+
+    public, signature = ed25519_sign(
+        seed, domain_frame(S13_MESSAGE_DOMAIN, vectors.request_canonical(request))
+    )
+    return {
+        "request": request,
+        "requester": "foreign-verifier",
+        "signature": {
+            "suite": "ed25519",
+            "key_id": "foreign",
+            "signature": list(signature),
+        },
+    }, public

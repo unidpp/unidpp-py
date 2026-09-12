@@ -1,15 +1,18 @@
-"""Pure-Python Ed25519 signature verification (RFC 8032).
+"""Pure-Python Ed25519 signatures (RFC 8032).
 
-The foreign harness verifies real signatures without any third-party
-dependency: the point is independence from the reference stack, so
-even the cryptography is the RFC's own arithmetic.
+The foreign harness verifies AND issues real signatures without any
+third-party dependency: the point is independence from the reference
+stack, so even the cryptography is the RFC's own arithmetic. Signing
+is the deterministic form the RFC specifies — the same seed and
+message always produce the same signature, which is what makes a
+foreign-issued signature acceptable to the reference verifier.
 """
 
 from __future__ import annotations
 
 import hashlib
 
-__all__ = ["verify"]
+__all__ = ["sign", "verify"]
 
 _p = 2**255 - 19
 _L = 2**252 + 27742317777372353535851937790883648493
@@ -91,3 +94,49 @@ def verify(public: bytes, message: bytes, signature: bytes) -> bool:
     if s >= _L:
         return False
     return _point_equal(_point_mul(8 * s, _B), _point_add(_point_mul(8, R), _point_mul(8 * k, A)))
+
+
+def secret_expand(seed: bytes):
+    """The RFC's scalar/nonce derivation from a 32-byte seed."""
+    if len(seed) != 32:
+        raise ValueError("the Ed25519 seed is 32 bytes")
+    h = hashlib.sha512(seed).digest()
+    a = int.from_bytes(h[:32], "little")
+    a &= (1 << 254) - 8
+    a |= 1 << 254
+    return a, h[32:]
+
+
+def _point_compress(P) -> bytes:
+    zinv = pow(P[2], _p - 2, _p)
+    x = P[0] * zinv % _p
+    y = P[1] * zinv % _p
+    return int.to_bytes(y | ((x & 1) << 255), 32, "little")
+
+
+def _basepoint():
+    # RFC 8032: B is the point with y = 4/5 and x even.
+    y = 4 * pow(5, _p - 2, _p) % _p
+    x = _recover_x(y, 0)
+    if x & 1:
+        x = _p - x
+    return (x, y, 1, x * y % _p)
+
+
+_B = _basepoint()
+
+
+def sign(seed: bytes, message: bytes) -> tuple[bytes, bytes]:
+    """RFC 8032 deterministic signing: returns (public, signature)."""
+    a, prefix = secret_expand(seed)
+    public = _point_compress(_point_mul(a, _B))
+    r = int.from_bytes(
+        hashlib.sha512(prefix + message).digest(), "little"
+    ) % _L
+    R = _point_compress(_point_mul(r, _B))
+    k = (
+        int.from_bytes(hashlib.sha512(R + public + message).digest(), "little")
+        % _L
+    )
+    s = (r + k * a) % _L
+    return public, R + int.to_bytes(s, 32, "little")
