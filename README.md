@@ -90,3 +90,12 @@ The suite covers the model, event log, verification ladder, adapters
 (temporal, carrier, corpus), and the competitor register. The
 EU-profile corpus tests skip automatically when the licensed
 extraction is not present.
+
+## Releasing
+
+Releases are version tags: a pushed `v*` tag runs `.github/workflows/publish.yml`,
+which builds the sdist and wheel and uploads them to PyPI through PyPI trusted
+publishing. Trusted publishing needs a one-time link on pypi.org: under the
+project's publishing settings, add this repository and the `publish` workflow
+as a trusted publisher. The first publication of 0.1.0 was made by the owner
+from a maintainer machine, before trusted publishing was linked.
