@@ -209,3 +209,63 @@ def test_f3_tier1_transforms_deterministically_and_tiers_refuse():
         mapping.apply_deterministic(
             {"hops": [fixture["divergence"]]}, "12.5 kg", transform
         )
+
+
+def test_countersigned_vector_verifies_at_its_sequence():
+    """The s13-countersigned vector: the authority's counter-signature
+    over the custodian's answer and its place, byte-exact."""
+    fixture = _fixture(SIGNATIF_FIXTURES, "s13-countersigned.json")
+    countersigned = fixture["countersigned"]
+    custodian_public = bytes.fromhex(fixture["responder_public_hex"])
+    authority_public = bytes.fromhex(fixture["authority_public_hex"])
+    protocol.verify_s13_response(countersigned["signed"], custodian_public)
+    protocol.verify_s13_non_repudiable(
+        countersigned, custodian_public, authority_public, fixture["sequence"]
+    )
+
+
+def test_countersigned_vector_refuses_a_stale_sequence():
+    fixture = _fixture(SIGNATIF_FIXTURES, "s13-countersigned.json")
+    countersigned = fixture["countersigned"]
+    custodian_public = bytes.fromhex(fixture["responder_public_hex"])
+    authority_public = bytes.fromhex(fixture["authority_public_hex"])
+    with pytest.raises(protocol.ProtocolFailure) as failure:
+        protocol.verify_s13_non_repudiable(
+            countersigned, custodian_public, authority_public, fixture["sequence"] + 1
+        )
+    assert "stale sequence" in str(failure.value)
+
+
+def test_journal_replays_to_the_decisions():
+    exchange = _fixture(SIGNATIF_FIXTURES, "s13-signed-exchange.json")
+    countersigned = _fixture(SIGNATIF_FIXTURES, "s13-countersigned.json")
+    publics = {
+        "de-zoll": bytes.fromhex(exchange["requester_public_hex"]),
+        "weilian-shenzhen": bytes.fromhex(exchange["responder_public_hex"]),
+        "cn-samr": bytes.fromhex(countersigned["authority_public_hex"]),
+    }
+    journal = {
+        "side": "custodian",
+        "entries": [
+            exchange["signed_request"],
+            exchange["signed_response"],
+            countersigned["countersigned"],
+        ],
+    }
+    decisions = protocol.replay_s13_journal(journal, publics)
+    assert len(decisions) == 2
+    assert all(d["outcome"] == "attestation-offer" for d in decisions)
+    assert all(d["governing_policy"] == "cn-dynamic-bms" for d in decisions)
+
+
+def test_journal_replay_refuses_an_orphan_answer():
+    exchange = _fixture(SIGNATIF_FIXTURES, "s13-signed-exchange.json")
+    countersigned = _fixture(SIGNATIF_FIXTURES, "s13-countersigned.json")
+    publics = {
+        "weilian-shenzhen": bytes.fromhex(exchange["responder_public_hex"]),
+        "cn-samr": bytes.fromhex(countersigned["authority_public_hex"]),
+    }
+    orphan = {"side": "custodian", "entries": [exchange["signed_response"]]}
+    with pytest.raises(protocol.ProtocolFailure) as failure:
+        protocol.replay_s13_journal(orphan, publics)
+    assert "bound to no journaled request" in str(failure.value)

@@ -268,3 +268,17 @@ def battery_lens(inputs: list) -> bytes:
 
 def load_fixture(path: Path) -> dict:
     return json.loads(path.read_text())
+
+
+def authority_payload(response: dict, sequence: int) -> bytes:
+    """The authority's counter-signature payload (XB-7): the answer's
+    identity and place — request digest, sequence, governing policy,
+    version — each length-prefixed."""
+    return canonical_fields(
+        [
+            bytes(response["request_digest"]),
+            le_u64(sequence),
+            response["governing_policy"].encode(),
+            le_u64(response["governing_policy_version"]),
+        ]
+    )

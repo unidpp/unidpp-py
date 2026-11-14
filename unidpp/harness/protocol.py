@@ -216,3 +216,86 @@ def sign_s13_request(request: dict, seed: bytes) -> dict:
             "signature": list(signature),
         },
     }, public
+
+
+def verify_s13_non_repudiable(
+    countersigned: dict,
+    custodian_public: bytes,
+    authority_public: bytes,
+    expected_sequence: int,
+) -> None:
+    """The non-repudiable answer (XB-7): the custodian's signature
+    AND the authority's counter-signature over the answer's identity
+    and place, at the exact expected sequence (a stale sequence is a
+    replayed answer)."""
+    verify_s13_response(countersigned["signed"], custodian_public)
+    if countersigned["sequence"] != expected_sequence:
+        raise ProtocolFailure(
+            f"s13 non-repudiation: stale sequence {countersigned['sequence']} "
+            f"(expected {expected_sequence}) — a replayed answer"
+        )
+    _verify_slot(
+        countersigned["authority_signature"],
+        S13_MESSAGE_DOMAIN,
+        vectors.authority_payload(countersigned["signed"]["response"], countersigned["sequence"]),
+        authority_public,
+        "authority counter-signature",
+    )
+
+
+def replay_s13_journal(journal: dict, publics: dict[str, bytes]) -> list[dict]:
+    """Replay the choreography from the journal alone (XB-6): every
+    entry verifies under the caller's node publics, every answer
+    binds to a journaled request's digest, and every counter-signature
+    sits at its exact monotone place per (subject, custodian), from
+    1. The decisions come back in journal sequence.
+
+    ``publics`` names the peer: node id -> public key. The key-id
+    reading (which of a node's keys) stays the caller's, as in the
+    envelope verifies."""
+    decisions: list[dict] = []
+    subjects: dict[str, str] = {}
+    sequences: dict[str, int] = {}
+    for entry in journal["entries"]:
+        if "request" in entry:
+            verify_s13_request(entry, publics[entry["requester"]])
+            digest = hashlib.sha256(vectors.request_canonical(entry["request"])).digest().hex()
+            subjects[digest] = entry["request"]["subject"]
+        elif "response" in entry:
+            verify_s13_response(entry, publics[entry["response"]["custodian"]])
+            digest = _digest_hex(entry["response"]["request_digest"])
+            if digest not in subjects:
+                raise ProtocolFailure("an answer is bound to no journaled request")
+            decisions.append(_decision_of(entry["response"]))
+        else:
+            answer = entry["signed"]["response"]
+            digest = _digest_hex(answer["request_digest"])
+            if digest not in subjects:
+                raise ProtocolFailure("an answer is bound to no journaled request")
+            subject = subjects[digest]
+            place = f"{subject}|{answer['custodian']}"
+            expected = sequences.get(place, 0) + 1
+            verify_s13_non_repudiable(
+                entry,
+                publics[answer["custodian"]],
+                publics[entry["authority"]],
+                expected,
+            )
+            sequences[place] = entry["sequence"]
+            decisions.append(_decision_of(answer))
+    return decisions
+
+
+def _digest_hex(value) -> str:
+    if isinstance(value, str):
+        return value
+    return bytes(value).hex()
+
+
+def _decision_of(response: dict) -> dict:
+    return {
+        "request_digest_hex": _digest_hex(response["request_digest"]),
+        "outcome": response["outcome"]["outcome"],
+        "governing_policy": response["governing_policy"],
+        "governing_policy_version": response["governing_policy_version"],
+    }
